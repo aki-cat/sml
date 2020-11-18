@@ -28,8 +28,8 @@ class Vec3 {
     Vec3 clamped(const float s) const;
     Vec3& clamp(const float s);
 
-    float magnitude() const;
-    float magnitude_squared() const;
+    float length() const;
+    float length_squared() const;
 
     Vec3 translated(const Vec3& v) const;
     Vec3& translate(const Vec3& v);
@@ -140,17 +140,17 @@ inline Vec3 Vec3::right() {
 }
 
 inline Vec3 Vec3::x_axis() {
-    static const Vec3 v = Vec3(+1.0f, +0.0f, +0.0f);
+    static const Vec3 v = Vec3(1.0f, 0.0f, 0.0f);
     return v;
 }
 
 inline Vec3 Vec3::y_axis() {
-    static const Vec3 v = Vec3(+0.0f, +1.0f, +0.0f);
+    static const Vec3 v = Vec3(0.0f, 1.0f, 0.0f);
     return v;
 }
 
 inline Vec3 Vec3::z_axis() {
-    static const Vec3 v = Vec3(+0.0f, +0.0f, +1.0f);
+    static const Vec3 v = Vec3(0.0f, 0.0f, 1.0f);
     return v;
 }
 
@@ -178,28 +178,48 @@ inline Vec3 Vec3::cross(const Vec3& v) const {
     return Vec3((y * v.z) - (z * v.y), (z * v.x) - (x * v.z), (x * v.y) - (y * v.x));
 }
 
-inline Vec3 Vec3::normalized() const { return *this / magnitude(); }
+inline Vec3 Vec3::normalized() const {
+    const float normalization = 1.0f / length();
+    return Vec3(x * normalization, y * normalization, z * normalization);
+}
 
-inline Vec3& Vec3::normalize() { return *this /= static_cast<float>(sqrt(*this * *this)); }
+inline Vec3& Vec3::normalize() {
+    const float normalization = 1.0f / length();
+    x *= normalization;
+    y *= normalization;
+    z *= normalization;
+    return *this;
+}
 
-inline Vec3 Vec3::clamped(const float s) const { return normalized() * s; }
+inline Vec3 Vec3::clamped(const float s) const {
+    Vec3 normal = normalized();
+    return normal.scaled(s);
+}
 
-inline Vec3& Vec3::clamp(const float s) { return normalize() *= s; }
+inline Vec3& Vec3::clamp(const float s) {
+    normalize();
+    return scale(s);
+}
 
-inline float Vec3::magnitude() const { return static_cast<float>(sqrt((*this) * (*this))); }
+inline float Vec3::length() const { return static_cast<float>(sqrt(length_squared())); }
 
-inline float Vec3::magnitude_squared() const { return *this * *this; }
+inline float Vec3::length_squared() const { return dot(*this); }
 
-inline Vec3 Vec3::translated(const Vec3& v) const { return *this + v; }
+inline Vec3 Vec3::translated(const Vec3& v) const { return Vec3(x + v.x, y + v.y, z + v.z); }
 
-inline Vec3& Vec3::translate(const Vec3& v) { return *this += v; }
+inline Vec3& Vec3::translate(const Vec3& v) {
+    x += v.x;
+    y += v.y;
+    z += v.z;
+    return *this;
+}
 
 inline Vec3 Vec3::rotated(const Vec3& axis, const double angle) const {
     const float sine = static_cast<float>(sin(angle));
     const float cosine = static_cast<float>(cos(angle));
     const Vec3 normal = axis.normalized();
     const Vec3& v = (*this);
-    return (1 - cosine) * (dot(normal)) * normal + cosine * v + sine * (normal.cross(v));
+    return (1 - cosine) * dot(normal) * normal + cosine * v + sine * normal.cross(v);
 }
 
 inline Vec3& Vec3::rotate(const Vec3& axis, const double angle) {
@@ -210,9 +230,14 @@ inline Vec3& Vec3::rotate(const Vec3& axis, const double angle) {
     return *this;
 }
 
-inline Vec3 Vec3::scaled(const float s) const { return *this * s; }
+inline Vec3 Vec3::scaled(const float s) const { return Vec3(x * s, y * s, z * s); }
 
-inline Vec3& Vec3::scale(const float s) { return *this *= s; }
+inline Vec3& Vec3::scale(const float s) {
+    x *= s;
+    y *= s;
+    z *= s;
+    return *this;
+}
 
 // Conversion operators
 
