@@ -53,9 +53,6 @@ class Vec3 {
     static Vec3 x_axis();
     static Vec3 y_axis();
     static Vec3 z_axis();
-
-    // conversions
-    operator std::string();
 };
 
 // Imutable operators
@@ -239,10 +236,6 @@ inline Vec3& Vec3::scale(const float s) {
     return *this;
 }
 
-// Conversion operators
-
-inline Vec3::operator std::string() { return to_string(); }
-
 // Imutable operators
 
 inline bool operator==(const Vec3& a, const Vec3& b) {
@@ -309,5 +302,11 @@ inline Vec3& operator-=(Vec3& a, const Vec3& b) {
 }
 
 }  // namespace SML
+
+namespace std {
+
+inline string to_string(const SML::Vec3& v) { return v.to_string(); }
+
+}  // namespace std
 
 #endif

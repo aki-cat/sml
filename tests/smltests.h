@@ -53,11 +53,11 @@ struct TestRunner {
         std::cout << SUCCESS_TEXT_COLOUR "OK!" NORMAL_TEXT_COLOUR << std::endl;        \
     }
 
-#define ASSERT_ARE_EQUAL(value, expected)                                           \
-    {                                                                               \
-        std::stringstream stream{};                                                 \
-        stream << std::string(expected) << " expected; got " << std::string(value); \
-        ASSERT(value == expected, stream.str());                                    \
+#define ASSERT_ARE_EQUAL(value, expected)                                                 \
+    {                                                                                     \
+        std::stringstream stream{};                                                       \
+        stream << std::to_string(expected) << " expected; got " << std::to_string(value); \
+        ASSERT(value == expected, stream.str());                                          \
     }
 
 #define ASSERT_ARE_SAME(value, expected)                          \
