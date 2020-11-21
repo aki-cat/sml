@@ -69,6 +69,9 @@ struct TestRunner {
         ASSERT(value == expected, stream.str());                  \
     }
 
+#define ASSERT_IS_TRUE(value) ASSERT_ARE_EQUAL(value, true);
+#define ASSERT_IS_FALSE(value) ASSERT_ARE_EQUAL(value, false);
+
 #define DESCRIBE_CLASS(class_type)                     \
     static const std::string CLASS_NAME = #class_type; \
     template <>                                        \
