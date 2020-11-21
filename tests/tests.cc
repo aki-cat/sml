@@ -4,15 +4,16 @@
 #include <iostream>
 
 using namespace SML;
+using namespace SML::Tests;
 
 int main() {
     // Vec3 tests
 
     std::cout << std::endl << "Running tests..." << std::endl << std::endl;
 
-    Tests::Vec3_TranslationAndAddition_ExpectedResult();
+    TestRunner<Vec3>::run();
 
-    if (SML::Tests::ERROR_COUNT > 0) {
+    if (ERROR_COUNT > 0) {
         return -1;
     }
 

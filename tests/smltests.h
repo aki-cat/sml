@@ -1,44 +1,63 @@
 #ifndef SLIPPYS_MATH_LIBRARY_TESTS_H
 #define SLIPPYS_MATH_LIBRARY_TESTS_H
 
+#include <cstdint>
+#include <functional>
+#include <iostream>
+#include <string>
+#include <vector>
+
 #define LOCATION_TEXT_COLOUR "\033[94;1m"
 #define FAILURE_TEXT_COLOUR "\033[91m"
 #define NORMAL_TEXT_COLOUR "\033[0m"
 #define NORMAL_TEXT_COLOUR_BOLD "\033[0;1m"
+#define SUCCESS_TEXT_COLOUR "\033[92;1m"
+#define CLASS_TEXT_COLOUR "\033[95;1m"
 
 #define S1(x) #x
 #define S2(x) S1(x)
-#define SELF(x) x
 #define LOCATION_MESSAGE LOCATION_TEXT_COLOUR __FILE__ "(" S2(__LINE__) "):" NORMAL_TEXT_COLOUR
 #define ASSERTION_FAIL_MESSAGE \
-    LOCATION_MESSAGE FAILURE_TEXT_COLOUR " Assertion failed! " NORMAL_TEXT_COLOUR
+    LOCATION_MESSAGE FAILURE_TEXT_COLOUR " Assertion failed! ❌ " NORMAL_TEXT_COLOUR
 
-#include <cstdint>
-#include <cstdio>
-#include <iostream>
+#define TEST_NAME(method, situation, expectation) method##_##situation##_##expectation
 
 namespace SML {
 namespace Tests {
 
 static uint32_t ERROR_COUNT = 0;
-static std::string CURRENT_CLASS = "<NoClass>";
 
-}  // namespace Tests
-}  // namespace SML
+template <typename T>
+struct TestRunner {
+   public:
+    TestRunner();
 
-using namespace SML::Tests;
+    static void run() {
+        const TestRunner<T> runner = TestRunner<T>();
+        for (auto const test : runner._tests) {
+            test();
+        }
+    }
 
-#define ASSERT(expr, error_msg)                                        \
-    if (!(expr)) {                                                     \
-        std::cerr << ASSERTION_FAIL_MESSAGE << error_msg << std::endl; \
-        ERROR_COUNT++;                                                 \
+   private:
+    std::vector<std::function<void(void)>> _tests;
+};
+
+#define ASSERT(expr, error_msg)                                                        \
+    std::cout << "\t" << CLASS_TEXT_COLOUR << CLASS_NAME << NORMAL_TEXT_COLOUR << ": " \
+              << CURRENT_TEST << " ";                                                  \
+    if (!(expr)) {                                                                     \
+        std::cerr << ASSERTION_FAIL_MESSAGE << error_msg << std::endl;                 \
+        ERROR_COUNT++;                                                                 \
+    } else {                                                                           \
+        std::cout << SUCCESS_TEXT_COLOUR "OK!" NORMAL_TEXT_COLOUR << std::endl;        \
     }
 
 #define ASSERT_ARE_EQUAL(value, expected)                                           \
     {                                                                               \
         std::stringstream stream{};                                                 \
-        stream << std::string(value) << " expected; got " << std::string(expected); \
-        ASSERT(a == b, stream.str());                                               \
+        stream << std::string(expected) << " expected; got " << std::string(value); \
+        ASSERT(value == expected, stream.str());                                    \
     }
 
 #define ASSERT_ARE_SAME(value, expected)                          \
@@ -46,13 +65,20 @@ using namespace SML::Tests;
         void* value_ptr = reinterpret_cast<void*>(&value);        \
         void* expected_ptr = reinterpret_cast<void*>(&expected);  \
         std::stringstream stream{};                               \
-        stream << value_ptr << " expected; got " << expected_ptr; \
+        stream << expected_ptr << " expected; got " << value_ptr; \
         ASSERT(value == expected, stream.str());                  \
     }
 
-// Test definition
+#define DEFINE_CLASS_TESTS(class_type)                 \
+    static const std::string CLASS_NAME = #class_type; \
+    template <>                                        \
+    TestRunner<class_type>::TestRunner() : _tests {}
 
-#define SML_TEST(method, case, expectation) \
-    void SELF(method) SELF(_) SELF(case) SELF(_) SELF(expectation)
+#define DEFINE_TEST(method, situation, expectation) \
+    _tests.push_back([]() {});                      \
+    _tests[_tests.size() - 1] = [CURRENT_TEST = #method " " #situation " " #expectation]()
+
+}  // namespace Tests
+}  // namespace SML
 
 #endif
