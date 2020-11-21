@@ -69,14 +69,15 @@ struct TestRunner {
         ASSERT(value == expected, stream.str());                  \
     }
 
-#define DEFINE_CLASS_TESTS(class_type)                 \
+#define DESCRIBE_CLASS(class_type)                     \
     static const std::string CLASS_NAME = #class_type; \
     template <>                                        \
-    TestRunner<class_type>::TestRunner() : _tests {}
+    TestRunner<class_type>::TestRunner() : _tests()
 
-#define DEFINE_TEST(method, situation, expectation) \
-    _tests.push_back([]() {});                      \
-    _tests[_tests.size() - 1] = [CURRENT_TEST = #method " " #situation " " #expectation]()
+#define DESCRIBE_TEST(method, situation, expectation) \
+    _tests.push_back([]() {});                        \
+    _tests[_tests.size() - 1] = [CURRENT_TEST =       \
+                                     #method " should " #expectation " when " #situation]()
 
 }  // namespace Tests
 }  // namespace SML
