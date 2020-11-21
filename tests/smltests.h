@@ -22,6 +22,13 @@
 
 #define TEST_NAME(method, situation, expectation) method##_##situation##_##expectation
 
+namespace std {
+
+const string& to_string(const string& s) { return s; }
+string to_string(const bool& value) { return value ? "true" : "false"; }
+
+}  // namespace std
+
 namespace SML {
 namespace Tests {
 
@@ -43,14 +50,14 @@ struct TestRunner {
     std::vector<std::function<void(void)>> _tests;
 };
 
-#define ASSERT(expr, error_msg)                                                        \
-    std::cout << "\t" << CLASS_TEXT_COLOUR << CLASS_NAME << NORMAL_TEXT_COLOUR << ": " \
-              << CURRENT_TEST << " ";                                                  \
-    if (!(expr)) {                                                                     \
-        std::cerr << ASSERTION_FAIL_MESSAGE << error_msg << std::endl;                 \
-        ERROR_COUNT++;                                                                 \
-    } else {                                                                           \
-        std::cout << SUCCESS_TEXT_COLOUR "OK!" NORMAL_TEXT_COLOUR << std::endl;        \
+#define ASSERT(expr, error_msg)                                                 \
+    std::cout << "\t" << CLASS_TEXT_COLOUR << CLASS_NAME << NORMAL_TEXT_COLOUR  \
+              << "::" << CURRENT_TEST << " ";                                   \
+    if (!(expr)) {                                                              \
+        std::cerr << ASSERTION_FAIL_MESSAGE << error_msg << std::endl;          \
+        ERROR_COUNT++;                                                          \
+    } else {                                                                    \
+        std::cout << SUCCESS_TEXT_COLOUR "OK!" NORMAL_TEXT_COLOUR << std::endl; \
     }
 
 #define ASSERT_ARE_EQUAL(value, expected)                                                 \
@@ -69,18 +76,19 @@ struct TestRunner {
         ASSERT(value == expected, stream.str());                  \
     }
 
-#define ASSERT_IS_TRUE(value) ASSERT_ARE_EQUAL(value, true);
-#define ASSERT_IS_FALSE(value) ASSERT_ARE_EQUAL(value, false);
+#define ASSERT_IS_TRUE(value) ASSERT_ARE_EQUAL((value), true);
+#define ASSERT_IS_FALSE(value) ASSERT_ARE_EQUAL((value), false);
 
 #define DESCRIBE_CLASS(class_type)                     \
     static const std::string CLASS_NAME = #class_type; \
     template <>                                        \
     TestRunner<class_type>::TestRunner() : _tests()
 
-#define DESCRIBE_TEST(method, situation, expectation) \
-    _tests.push_back([]() {});                        \
-    _tests[_tests.size() - 1] = [CURRENT_TEST =       \
-                                     #method " should " #expectation " when " #situation]()
+#define DESCRIBE_TEST(method, situation, expectation)                            \
+    _tests.push_back([]() {});                                                   \
+    _tests[_tests.size() - 1] = [CURRENT_TEST = NORMAL_TEXT_COLOUR_BOLD #method  \
+                                 "()" NORMAL_TEXT_COLOUR " should " #expectation \
+                                 " when " #situation]()
 
 }  // namespace Tests
 }  // namespace SML
