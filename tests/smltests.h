@@ -20,7 +20,7 @@ namespace Tests {
 static uint32_t ERROR_COUNT = 0;
 
 template <typename T>
-constexpr const char* CLASS_NAME;
+constexpr const char* CLASS_NAME = nullptr;
 
 template <typename T>
 class TestRunner {
@@ -29,7 +29,7 @@ class TestRunner {
 
     static void run() {
         const TestRunner<T> runner = TestRunner<T>();
-        for (auto const test : runner._tests) {
+        for (const auto& test : runner._tests) {
             test();
         }
         std::cout << std::endl;

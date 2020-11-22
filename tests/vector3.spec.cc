@@ -1,5 +1,6 @@
 #include "smltests.h"
-#include "vector3.h"
+
+#include <sml/vector3.h>
 
 namespace SML {
 namespace Tests {

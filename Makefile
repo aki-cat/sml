@@ -1,6 +1,6 @@
 BIN_DIR=bin
 SOURCE_DIR=tests
-INCLUDE_DIR=include
+INCLUDE_DIR=.
 
 CXXFLAGS=-std=c++14
 CCFLAGS=-O0 -Wall -Werror -Wpedantic -I$(INCLUDE_DIR) -I$(SOURCE_DIR)
