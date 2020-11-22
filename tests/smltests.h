@@ -72,8 +72,9 @@ class TestRunner {
 
 #define PRINT_TEST_SUCCESS() std::cout << SUCCESS_TEXT_COLOUR "OK!" NORMAL_TEXT_COLOUR << std::endl
 #define PRINT_TEST_FAILURE(error_msg) std::cerr << ASSERTION_FAIL_MESSAGE << error_msg << std::endl
-#define PRINT_TEST_DESCRIPTION() \
-    std::cout << "\t" << CLASS_NAME<class_t> << NORMAL_TEXT_COLOUR << "::" << CURRENT_TEST << " "
+#define PRINT_TEST_DESCRIPTION()                                                        \
+    std::cout << "\t" << CLASS_TEXT_COLOUR << CLASS_NAME<class_t> << NORMAL_TEXT_COLOUR \
+              << "::" << CURRENT_TEST << " "
 
 #define ASSERT(expr, error_msg)        \
     PRINT_TEST_DESCRIPTION();          \
