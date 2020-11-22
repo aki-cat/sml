@@ -1,4 +1,5 @@
 
+#include "matrix4.spec.cc"
 #include "vector3.spec.cc"
 
 #include <iostream>
@@ -12,6 +13,7 @@ int main() {
     std::cout << std::endl << "Running tests..." << std::endl << std::endl;
 
     TestRunner<Vec3>::run();
+    TestRunner<Mat4>::run();
 
     if (ERROR_COUNT > 0) {
         return -1;

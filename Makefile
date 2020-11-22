@@ -13,15 +13,17 @@ NORMAL_TEXT=\033[0m
 
 TESTS_EXECUTABLE=$(BIN_DIR)/run_tests
 
-.PHONY: all clean
+.PHONY: all clean build
 
-all: clean $(TESTS_EXECUTABLE)
+all: clean build
 	@./$(TESTS_EXECUTABLE) \
 		&& echo "\n$(SUCCESS_TEXT)Tests were successful!$(NORMAL_TEXT)" \
 		|| echo "\n$(FAILURE_TEXT)One or more tests failed!$(NORMAL_TEXT)";
 
 clean:
-	rm -rf $(TESTS_EXECUTABLE) $(SOURCE_DIR)/**.o
+	rm -rfv $(TESTS_EXECUTABLE) $(SOURCE_DIR)/**/*.o
+
+build: $(TESTS_EXECUTABLE)
 
 $(TESTS_EXECUTABLE): $(BIN_DIR)
 	$(CXX) $(CXXFLAGS) $(CCFLAGS) $(SOURCE_DIR)/tests.cc -o $(TESTS_EXECUTABLE)
