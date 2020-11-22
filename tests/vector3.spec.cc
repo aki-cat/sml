@@ -36,6 +36,13 @@ DESCRIBE_CLASS(Vec3) {
         Vec3 a{1, 2, 3};
         ASSERT_ARE_EQUAL(std::to_string(a), std::string("Vec3(1, 2, 3)"));
     };
+
+    DESCRIBE_TEST(reinterpret_cast<float*>, SimpleVector, ReturnExpectedContents) {
+        Vec3 v{1, 2, 3};
+        float* cast_v = reinterpret_cast<float*>(&v);
+        float expected[3] = {1, 2, 3};
+        ASSERT_ARRAYS_ARE_EQUAL(cast_v, expected, 0, 3);
+    };
 }
 
 }  // namespace Tests

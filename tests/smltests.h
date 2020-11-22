@@ -86,25 +86,25 @@ class TestRunner {
 #define ASSERT_IS_TRUE(value) ASSERT_ARE_EQUAL((value), true);
 #define ASSERT_IS_FALSE(value) ASSERT_ARE_EQUAL((value), false);
 
-#define ASSERT_ARRAYS_ARE_EQUAL(value, expected, range_start, range_length)              \
-    {                                                                                    \
-        PRINT_TEST_DESCRIPTION();                                                        \
-        std::stringstream stream{};                                                      \
-        stream << std::endl;                                                             \
-        bool success = true;                                                             \
-        for (int range_index = range_start; range_index < range_length; range_index++) { \
-            if (!(value[range_index] == expected[range_index])) {                        \
-                success = false;                                                         \
-                stream << "\t\t- " << expected[range_index] << " expected at index #"    \
-                       << range_index << "; got " << value[range_index] << std::endl;    \
-            }                                                                            \
-        }                                                                                \
-        if (success) {                                                                   \
-            PRINT_TEST_SUCCESS();                                                        \
-        } else {                                                                         \
-            ERROR_COUNT++;                                                               \
-            PRINT_TEST_FAILURE(stream.str());                                            \
-        };                                                                               \
+#define ASSERT_ARRAYS_ARE_EQUAL(value, expected, range_start, range_length)                   \
+    {                                                                                         \
+        PRINT_TEST_DESCRIPTION();                                                             \
+        std::stringstream stream{};                                                           \
+        stream << std::endl;                                                                  \
+        bool success = true;                                                                  \
+        for (uint32_t range_index = range_start; range_index < range_length; range_index++) { \
+            if (!(value[range_index] == expected[range_index])) {                             \
+                success = false;                                                              \
+                stream << "\t\t- " << expected[range_index] << " expected at index #"         \
+                       << range_index << "; got " << value[range_index] << std::endl;         \
+            }                                                                                 \
+        }                                                                                     \
+        if (success) {                                                                        \
+            PRINT_TEST_SUCCESS();                                                             \
+        } else {                                                                              \
+            ERROR_COUNT++;                                                                    \
+            PRINT_TEST_FAILURE(stream.str());                                                 \
+        };                                                                                    \
     }
 
 #define DESCRIBE_CLASS(class_type)                              \
