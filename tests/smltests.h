@@ -1,6 +1,8 @@
 #ifndef SLIPPYS_MATH_LIBRARY_TESTS_H
 #define SLIPPYS_MATH_LIBRARY_TESTS_H
 
+#include <cfloat>
+#include <cmath>
 #include <cstdint>
 #include <functional>
 #include <iostream>
@@ -21,6 +23,21 @@ static uint32_t ERROR_COUNT = 0;
 
 template <typename T>
 constexpr const char* CLASS_NAME = nullptr;
+
+template <typename T>
+bool are_equal(const T& a, const T& b) {
+    return a == b;
+}
+
+template <>
+bool are_equal(const float& a, const float& b) {
+    return std::fabs(a - b) <= FLT_EPSILON;
+}
+
+template <>
+bool are_equal(const double& a, const double& b) {
+    return fabs(a - b) <= DBL_EPSILON;
+}
 
 template <typename T>
 class TestRunner {
@@ -71,7 +88,7 @@ class TestRunner {
     {                                                                                     \
         std::stringstream stream{};                                                       \
         stream << std::to_string(expected) << " expected; got " << std::to_string(value); \
-        ASSERT(value == expected, stream.str());                                          \
+        ASSERT(are_equal(value, expected), stream.str());                                 \
     }
 
 #define ASSERT_ARE_SAME(value, expected)                          \
@@ -80,7 +97,7 @@ class TestRunner {
         void* expected_ptr = reinterpret_cast<void*>(&expected);  \
         std::stringstream stream{};                               \
         stream << expected_ptr << " expected; got " << value_ptr; \
-        ASSERT(value == expected, stream.str());                  \
+        ASSERT(are_equal(value, expected), stream.str());         \
     }
 
 #define ASSERT_IS_TRUE(value) ASSERT_ARE_EQUAL((value), true);
@@ -93,7 +110,7 @@ class TestRunner {
         stream << std::endl;                                                                  \
         bool success = true;                                                                  \
         for (uint32_t range_index = range_start; range_index < range_length; range_index++) { \
-            if (!(value[range_index] == expected[range_index])) {                             \
+            if (!(are_equal(value[range_index], expected[range_index]))) {                    \
                 success = false;                                                              \
                 stream << "\t\t- " << expected[range_index] << " expected at index #"         \
                        << range_index << "; got " << value[range_index] << std::endl;         \
