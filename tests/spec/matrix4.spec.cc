@@ -2,6 +2,7 @@
 #include "smltests.h"
 
 #include <sml/matrix4.h>
+#include <type_traits>
 
 namespace SML {
 namespace Tests {
@@ -32,6 +33,18 @@ DESCRIBE_CLASS(Mat4) {
         Mat4 result = mat * Mat4({4, 3, 7, 5, 1, 7, 4, 8, 4, 0, 2, 1, 5, 7, 9, 3});
         float expected[16] = {48, 90, 88, 89, 40, 71, 76, 86, 60, 68, 81, 87, 49, 72, 86, 64};
         ASSERT_ARRAYS_ARE_EQUAL(result, expected, 0, 16);
+    };
+
+    DESCRIBE_TEST(std::is_trivial, CheckedByCompiler, BeTrivial) {
+        ASSERT_IS_FALSE(std::is_trivial<Mat4>::value);
+    };
+
+    DESCRIBE_TEST(std::is_standard_layout, CheckedByCompiler, BeStandardLayout) {
+        ASSERT_IS_TRUE(std::is_standard_layout<Mat4>::value);
+    };
+
+    DESCRIBE_TEST(std::is_pod, CheckedByCompiler, BePOD) {
+        ASSERT_IS_FALSE(std::is_pod<Mat4>::value);
     };
 }
 

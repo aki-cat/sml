@@ -1,6 +1,7 @@
 
-#include "matrix4.spec.cc"
-#include "vector3.spec.cc"
+#include "spec/matrix4.spec.cc"
+#include "spec/transform.spec.cc"
+#include "spec/vector3.spec.cc"
 
 #include <iostream>
 
@@ -14,6 +15,7 @@ int main() {
 
     TestRunner<Vec3>::run();
     TestRunner<Mat4>::run();
+    TestRunner<Transform>::run();
 
     if (ERROR_COUNT > 0) {
         return -1;
