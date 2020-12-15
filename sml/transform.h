@@ -1,9 +1,9 @@
 #ifndef SARGASSO_ENGINE_COMMON_MATH_TRANSFORM_H
 #define SARGASSO_ENGINE_COMMON_MATH_TRANSFORM_H
 
-#include "matrix4.h"
-#include "quaternion.h"
-#include "vector3.h"
+#include <sml/matrix4.h>
+#include <sml/quaternion.h>
+#include <sml/vector3.h>
 
 namespace SML {
 

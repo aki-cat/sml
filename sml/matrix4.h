@@ -7,12 +7,10 @@ Agostinelli. Licensed under MIT license.
 #ifndef SARGASSO_ENGINE_COMMON_MATH_MATRIX4_H
 #define SARGASSO_ENGINE_COMMON_MATH_MATRIX4_H
 
-#include "quaternion.h"
-#include "transform.h"
-#include "vector3.h"
-
-#include <array>
 #include <cstring>
+#include <sml/quaternion.h>
+#include <sml/transform.h>
+#include <sml/vector3.h>
 
 namespace SML {
 
