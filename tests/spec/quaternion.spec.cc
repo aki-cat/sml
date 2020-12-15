@@ -6,26 +6,26 @@ namespace SML {
 namespace Tests {
 
 DESCRIBE_CLASS(Quat) {
-    DESCRIBE_TEST(operator+, AddingTwoVectors, ReturnExpectedResult) {
+    DESCRIBE_TEST(operator+, AddingTwoQuaternions, ReturnExpectedResult) {
         const Quat a{1, 2, 3, 4};
         const Quat b{1, 2, 3, 4};
         Quat a_plus_b = a + b;
         ASSERT_ARE_EQUAL(a_plus_b, Quat({2, 4, 6, 8}));
     };
 
-    DESCRIBE_TEST(operator+=, AddingTwoVectors, ReturnExpectedResult) {
+    DESCRIBE_TEST(operator+=, AddingTwoQuaternions, ReturnExpectedResult) {
         Quat a{5, 4, 9, -1};
         a += Quat({2, 3, 4, 6});
         ASSERT_ARE_EQUAL(a, Quat({7, 7, 13, 5}));
     };
 
-    DESCRIBE_TEST(operator+=, AddingTwoVectors, ReturnExpectedReference) {
+    DESCRIBE_TEST(operator+=, AddingTwoQuaternions, ReturnExpectedReference) {
         Quat a{5, 4, 9, 2};
         Quat& c = (a += Quat({2, 3, 4, 1}));
         ASSERT_ARE_SAME(a, c);
     };
 
-    DESCRIBE_TEST(added, SimpleTranslation, ReturnExpectedResult) {
+    DESCRIBE_TEST(added, SimpleSum, ReturnExpectedResult) {
         Quat a{5, 4, 9, 2};
         Quat b{1, 1, 1, 3};
         Quat a_translated_b = a.added(b);
