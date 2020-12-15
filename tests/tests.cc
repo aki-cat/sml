@@ -1,5 +1,6 @@
 
 #include "spec/matrix4.spec.cc"
+#include "spec/quaternion.spec.cc"
 #include "spec/transform.spec.cc"
 #include "spec/vector3.spec.cc"
 
@@ -14,6 +15,7 @@ int main() {
     std::cout << std::endl << "Running tests..." << std::endl << std::endl;
 
     TestRunner<Vec3>::run();
+    TestRunner<Quat>::run();
     TestRunner<Mat4>::run();
     TestRunner<Transform>::run();
 
