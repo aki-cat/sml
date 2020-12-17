@@ -126,7 +126,7 @@ inline Mat4 Mat4::perspective_projection(float fov, float aspect, float z_near, 
 }
 
 inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target, const Vec3& up) {
-    Vec3 zaxis = Vec3{target.x - from.x, target.y - from.y, target.z - from.z}.normalized();
+    Vec3 zaxis = (target - from).normalized();
 
     // xaxis = zaxis x up
     Vec3 xaxis = zaxis.cross(up).normalized();
