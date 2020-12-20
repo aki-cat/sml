@@ -41,7 +41,8 @@ class Mat4 {
     static Mat4 zero();
 
     // useful dynamic matrices
-    static Mat4 perspective_projection(float fov, float aspect, float z_near, float z_far);
+    static Mat4 orthogonal_projection(float width, float height, float z_near, float z_far);
+    static Mat4 conical_projection(float fov, float aspect, float z_near, float z_far);
     static Mat4 look_at(const Vec3& from, const Vec3& target, const Vec3& up);
     static Mat4 look_at(const Vec3& from, const Vec3& target);
 
@@ -105,7 +106,19 @@ inline Mat4 Mat4::zero() {
 
 // Useful dynamic matrices
 
-inline Mat4 Mat4::perspective_projection(float fov, float aspect, float z_near, float z_far) {
+inline Mat4 Mat4::orthogonal_projection(float width, float height, float z_near, float z_far) {
+    Mat4 m = Mat4::zero();
+
+    m._points[0] = 2.0f / width;
+    m._points[5] = 2.0f / height;
+    m._points[10] = 1.0f / (z_far - z_near);
+    m._points[14] = z_near / (z_near - z_far);
+    m._points[15] = 1.0f;
+
+    return m;
+}
+
+inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, float z_far) {
     float rect_height;
     float rect_width;
     float z_dist = z_near - z_far;
