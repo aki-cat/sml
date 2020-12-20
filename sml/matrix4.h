@@ -139,10 +139,10 @@ inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, floa
 }
 
 inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target, const Vec3& up) {
-    Vec3 zaxis = (target - from).normalized();
+    Vec3 zaxis = (from - target).normalized();
 
     // xaxis = zaxis x up
-    Vec3 xaxis = zaxis.cross(up).normalized();
+    Vec3 xaxis = up.cross(zaxis).normalized();
 
     // yaxis = xaxis x zaxis
     Vec3 yaxis = xaxis.cross(zaxis);
@@ -256,13 +256,13 @@ inline Mat4& Mat4::copy(const Mat4& m) {
 inline std::string Mat4::to_string() const {
     std::stringstream stream{};
     stream << "Mat4 { ";
-    stream << _points[0] << _points[1] << _points[2] << _points[3];
+    stream << _points[0] << " " << _points[1] << " " << _points[2] << " " << _points[3];
     stream << " }" << std::endl << "     { ";
-    stream << _points[4] << _points[5] << _points[6] << _points[7];
+    stream << _points[4] << " " << _points[5] << " " << _points[6] << " " << _points[7];
     stream << " }" << std::endl << "     { ";
-    stream << _points[8] << _points[9] << _points[10] << _points[11];
+    stream << _points[8] << " " << _points[9] << " " << _points[10] << " " << _points[11];
     stream << " }" << std::endl << "     { ";
-    stream << _points[12] << _points[13] << _points[14] << _points[15];
+    stream << _points[12] << " " << _points[13] << " " << _points[14] << " " << _points[15];
     stream << " }" << std::endl;
     return stream.str();
 }
