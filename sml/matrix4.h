@@ -124,13 +124,10 @@ inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, f
 }
 
 inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, float z_far) {
-    float rect_height;
-    float rect_width;
+    float rect_height = 1.f / static_cast<float>(tan(fov * 0.5));
+    float rect_width = rect_height * aspect;
     float z_dist = z_near - z_far;
     float z_far_per_dist = z_far / z_dist;
-
-    rect_height = 1.f / static_cast<float>(tan(fov * 0.5));
-    rect_width = rect_height * aspect;
 
     Mat4 m = Mat4::zero();
 
@@ -144,10 +141,10 @@ inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, floa
 }
 
 inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target, const Vec3& up) {
-    Vec3 zaxis = (from - target).normalized();
+    Vec3 zaxis = (target - from).normalized();
 
     // xaxis = zaxis x up
-    Vec3 xaxis = up.cross(zaxis).normalized();
+    Vec3 xaxis = zaxis.cross(up).normalized();
 
     // yaxis = xaxis x zaxis
     Vec3 yaxis = xaxis.cross(zaxis);
