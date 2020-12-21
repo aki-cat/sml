@@ -41,7 +41,8 @@ class Mat4 {
     static Mat4 zero();
 
     // useful dynamic matrices
-    static Mat4 orthogonal_projection(float width, float height, float z_near, float z_far);
+    static Mat4 orthogonal_projection(float min_x, float min_y, float max_x, float max_y,
+                                      float z_near, float z_far);
     static Mat4 conical_projection(float fov, float aspect, float z_near, float z_far);
     static Mat4 look_at(const Vec3& from, const Vec3& target, const Vec3& up);
     static Mat4 look_at(const Vec3& from, const Vec3& target);
@@ -106,14 +107,18 @@ inline Mat4 Mat4::zero() {
 
 // Useful dynamic matrices
 
-inline Mat4 Mat4::orthogonal_projection(float width, float height, float z_near, float z_far) {
+inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, float max_y,
+                                        float z_near, float z_far) {
     Mat4 m = Mat4::zero();
 
-    m._points[0] = 2.0f / width;
-    m._points[5] = 2.0f / height;
-    m._points[10] = 1.0f / (z_far - z_near);
-    m._points[14] = z_near / (z_near - z_far);
-    m._points[15] = 1.0f;
+    m[0] = 2.f / (max_x - min_x);
+    m[5] = 2.f / (max_y - min_y);
+    m[10] = -2.f / (z_far - z_near);
+
+    m[12] = -(max_x + min_x) / (max_x - min_x);
+    m[13] = -(max_y + min_y) / (max_y - min_y);
+    m[14] = -(z_far + z_near) / (z_far - z_near);
+    m[15] = 1.f;
 
     return m;
 }
@@ -124,7 +129,7 @@ inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, floa
     float z_dist = z_near - z_far;
     float z_far_per_dist = z_far / z_dist;
 
-    rect_height = 1.0f / static_cast<float>(tan(fov * 0.5));
+    rect_height = 1.f / static_cast<float>(tan(fov * 0.5));
     rect_width = rect_height * aspect;
 
     Mat4 m = Mat4::zero();
@@ -132,8 +137,8 @@ inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, floa
     m[0] = rect_width;
     m[5] = rect_height;
     m[10] = z_far_per_dist;
-    m[11] = -1.0f;
-    m[14] = 2.0f * z_near * z_far_per_dist;
+    m[11] = -1.f;
+    m[14] = 2.f * z_near * z_far_per_dist;
 
     return m;
 }
