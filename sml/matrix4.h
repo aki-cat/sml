@@ -111,13 +111,11 @@ inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, f
                                         float z_near, float z_far) {
     Mat4 m = Mat4::zero();
 
-    m[0] = 2.f / (max_x - min_x);
-    m[5] = 2.f / (max_y - min_y);
-    m[10] = -2.f / (z_far - z_near);
+    m[0] = 2.f / max_x - min_x;
+    m[5] = 2.f / max_y - min_y;
+    m[10] = 1.f / (z_far - z_near);
 
-    m[12] = -(max_x + min_x) / (max_x - min_x);
-    m[13] = -(max_y + min_y) / (max_y - min_y);
-    m[14] = -(z_far + z_near) / (z_far - z_near);
+    m[14] = z_near / (z_near - z_far);
     m[15] = 1.f;
 
     return m;
