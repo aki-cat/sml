@@ -35,6 +35,24 @@ DESCRIBE_CLASS(Mat4) {
         ASSERT_ARRAYS_ARE_EQUAL(result, expected, 0, 16);
     };
 
+    DESCRIBE_TEST(operator*, MultipliedToVec3, ReturnExpectedResult) {
+        Mat4 mat({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
+        Vec3 result = mat * Vec3(17, 18, 19);
+        float* raw_result = reinterpret_cast<float*>(&(result));
+        float expected[] = {114.f, 334.f, 554.f};
+        ASSERT_ARRAYS_ARE_EQUAL(raw_result, expected, 0, 3);
+    };
+
+    DESCRIBE_TEST(orthogonal_projection, TranslatedVertex, ReturnExpectedResult) {
+        Vec3 vertex = Vec3(1, 1, 0);
+        Mat4 model = Mat4::identity().translated(Vec3(1, 1, 0));
+        Mat4 projection = Mat4::orthogonal_projection(-5, -5, 5, 5, -100, 100);
+
+        vertex = projection * model * vertex;
+
+        ASSERT_ARE_EQUAL(vertex, Vec3(.4, .4, 0));
+    };
+
     DESCRIBE_TEST(std::is_trivial, CheckedByCompiler, BeTrivial) {
         ASSERT_IS_FALSE(std::is_trivial<Mat4>::value);
     };
