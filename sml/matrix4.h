@@ -123,17 +123,15 @@ inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, f
 
 inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, float z_far) {
     float rect_height = 1.f / static_cast<float>(tan(fov * 0.5));
-    float rect_width = rect_height * aspect;
-    float z_dist = z_near - z_far;
-    float z_far_per_dist = z_far / z_dist;
+    float rect_width = aspect * 1.f / rect_height;
 
     Mat4 m = Mat4::zero();
 
     m[0] = rect_width;
     m[5] = rect_height;
-    m[10] = z_far_per_dist;
+    m[10] = (-z_near - z_far) / (z_near - z_far);
     m[11] = -1.f;
-    m[14] = 2.f * z_near * z_far_per_dist;
+    m[14] = 2.f * z_far * z_near / (z_near - z_far);
 
     return m;
 }
