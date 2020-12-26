@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+static constexpr const float FLOAT_EPSILON = 0.00001f;
+static constexpr const double DOUBLE_EPSILON = 0.000001;
+
 namespace std {
 
 const string& to_string(const string& s) { return s; }
@@ -31,12 +34,12 @@ bool are_equal(const T& a, const T& b) {
 
 template <>
 bool are_equal(const float& a, const float& b) {
-    return std::fabs(a - b) <= FLT_EPSILON;
+    return std::fabs(a - b) <= FLOAT_EPSILON;
 }
 
 template <>
 bool are_equal(const double& a, const double& b) {
-    return fabs(a - b) <= DBL_EPSILON;
+    return std::fabs(a - b) <= DOUBLE_EPSILON;
 }
 
 template <typename T>
@@ -113,8 +116,9 @@ class TestRunner {
         for (uint32_t range_index = range_start; range_index < range_length; range_index++) { \
             if (!(are_equal(value[range_index], expected[range_index]))) {                    \
                 success = false;                                                              \
-                stream << "\t\t- " << expected[range_index] << " expected at index #"         \
-                       << range_index << "; got " << value[range_index] << std::endl;         \
+                stream << "\t\t- " << std::to_string(expected[range_index])                   \
+                       << " expected at index #" << range_index << "; got "                   \
+                       << std::to_string(value[range_index]) << std::endl;                    \
             }                                                                                 \
         }                                                                                     \
         if (success) {                                                                        \

@@ -43,14 +43,44 @@ DESCRIBE_CLASS(Mat4) {
         ASSERT_ARRAYS_ARE_EQUAL(raw_result, expected, 0, 3);
     };
 
+    DESCRIBE_TEST(rotated, MultipliedToVec3, ReturnExpectedResult) {
+        Mat4 rotation = Mat4::identity().rotated(Vec3::y_axis(), M_PI / 6);
+        Vec3 result = rotation * Vec3(-2, 1, -1);
+        Vec3 expected = Vec3(.5f - std::sqrt(3), 1, -1 - std::sqrt(3) / 2.f);
+        ASSERT_ARE_EQUAL(result, expected);
+    };
+
     DESCRIBE_TEST(orthogonal_projection, TranslatedVertex, ReturnExpectedResult) {
-        Vec3 vertex = Vec3(1, 1, 0);
-        Mat4 model = Mat4::identity().translated(Vec3(1, 1, 0));
-        Mat4 projection = Mat4::orthogonal_projection(-5, -5, 5, 5, -100, 100);
+        Vec3 vertex = Vec3(-2, 2, 0);
+        Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), M_PI_2);
+        Mat4 projection = Mat4::orthogonal_projection(-10, -5, 10, 5, -100, 100);
 
         vertex = projection * model * vertex;
 
-        ASSERT_ARE_EQUAL(vertex, Vec3(.4, .4, 0));
+        ASSERT_ARE_EQUAL(vertex, Vec3(.2, .4, 0));
+    };
+
+    DESCRIBE_TEST(orthogonal_projection, RotatedVertex, ReturnExpectedResult) {
+        Vec3 vertex = Vec3(1, 0, 0);
+        Vec3 results[8];
+
+        const float sqrt_2 = std::sqrt(2.f) / 2.f;
+
+        const Vec3 expected[] = {
+            Vec3(+.1f, 0, 0), Vec3(+sqrt_2 * .1f, +sqrt_2 * .2f, 0),
+            Vec3(0, +.2f, 0), Vec3(-sqrt_2 * .1f, +sqrt_2 * .2f, 0),
+            Vec3(-.1f, 0, 0), Vec3(-sqrt_2 * .1f, -sqrt_2 * .2f, 0),
+            Vec3(0, -.2f, 0), Vec3(+sqrt_2 * .1f, -sqrt_2 * .2f, 0),
+        };
+
+        for (size_t i = 0; i < 8; i++) {
+            double angle = -(static_cast<double>(i) * M_PI_4);
+            Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), angle);
+            Mat4 projection = Mat4::orthogonal_projection(-10, -5, 10, 5, -100, 100);
+            results[i] = projection * model * vertex;
+        }
+
+        ASSERT_ARRAYS_ARE_EQUAL(results, expected, 0, 8);
     };
 
     DESCRIBE_TEST(std::is_trivial, CheckedByCompiler, BeTrivial) {
@@ -64,7 +94,7 @@ DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(std::is_pod, CheckedByCompiler, BePOD) {
         ASSERT_IS_FALSE(std::is_pod<Mat4>::value);
     };
-}
+}  // namespace Tests
 
 }  // namespace Tests
 }  // namespace SML

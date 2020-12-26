@@ -32,9 +32,16 @@ DESCRIBE_CLASS(Vec3) {
         ASSERT_ARE_EQUAL(a_translated_b, Vec3({6, 5, 10}));
     };
 
+    DESCRIBE_TEST(dot, SimpleDotProduct, ReturnExpectedResult) {
+        Vec3 a{2, 1, 0};
+        Vec3 b{1, -2, 0};
+        float a_dot_b = a.dot(b);
+        ASSERT_ARE_EQUAL(a_dot_b, 0.f);
+    };
+
     DESCRIBE_TEST(to_string, ConvertingVectorToString, ReturnExpectedResult) {
         Vec3 a{1, 2, 3};
-        ASSERT_ARE_EQUAL(std::to_string(a), std::string("Vec3(1, 2, 3)"));
+        ASSERT_ARE_EQUAL(std::to_string(a), std::string("Vec3(+1.000, +2.000, +3.000)"));
     };
 
     DESCRIBE_TEST(reinterpret_cast<float*>, SimpleVector, ReturnExpectedContents) {

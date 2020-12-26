@@ -44,12 +44,12 @@ inline Vec3 scaled(const Vec3& v, const float a) { return v * a; }
 
 inline Vec3& Transform::rotate(Vec3& v, const Quat& q) {
     const Vec3& qv = vector_from_quaternion(q);
-    return v += (2 * (qv ^ ((qv ^ v) + q.w * v)));
+    return v += (2 * (qv.cross((qv.cross(v)) + q.w * v)));
 }
 
 inline Vec3 Transform::rotated(const Vec3& v, const Quat& q) {
     const Vec3& qv = vector_from_quaternion(q);
-    return v + 2 * (qv ^ ((qv ^ v) + q.w * v));
+    return v + 2 * (qv.cross((qv.cross(v)) + q.w * v));
 }
 
 inline Quat Transform::quaternion_from_vector(const float w, const Vec3& v) {
@@ -59,8 +59,8 @@ inline Quat Transform::quaternion_from_vector(const float w, const Vec3& v) {
 inline Quat Transform::quaternion_from_vector(const Vec3& v) { return Quat(0.0f, v.x, v.y, v.z); }
 
 inline Quat Transform::quaternion_from_rotation(const Vec3& axis, const float angle) {
-    float sine = static_cast<float>(sin(angle / 2));
-    float cosine = static_cast<float>(cos(angle / 2));
+    float sine = static_cast<float>(std::sin(angle / 2));
+    float cosine = static_cast<float>(std::cos(angle / 2));
     const Vec3 vector_component = sine * axis.normalized();
     return Quat(cosine, vector_component.x, vector_component.y, vector_component.z);
 }

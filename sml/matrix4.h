@@ -204,36 +204,22 @@ inline Mat4 Mat4::rotated(const Vec3& axis, const float angle) const {
     Mat4 m = Mat4::identity();
 
     m[0] = 1 - 2 * (q.y * q.y + q.z * q.z);
-    m[1] = 2 * (q.x * q.y - q.z * q.w);
-    m[2] = 2 * (q.x * q.z + q.y * q.w);
+    m[1] = 2 * (q.x * q.y + q.z * q.w);
+    m[2] = 2 * (q.x * q.z - q.y * q.w);
 
-    m[4] = 2 * (q.x * q.y + q.z * q.w);
+    m[4] = 2 * (q.x * q.y - q.z * q.w);
     m[5] = 1 - 2 * (q.x * q.x + q.z * q.z);
-    m[6] = 2 * (q.y * q.z - q.x * q.w);
+    m[6] = 2 * (q.y * q.z + q.x * q.w);
 
-    m[8] = 2 * (q.x * q.z - q.y * q.w);
-    m[9] = 2 * (q.y * q.z + q.x * q.w);
+    m[8] = 2 * (q.x * q.z + q.y * q.w);
+    m[9] = 2 * (q.y * q.z - q.x * q.w);
     m[10] = 1 - 2 * (q.x * q.x + q.y * q.y);
 
     return (*this) * m.round();
 }
 
 inline Mat4& Mat4::rotate(const Vec3& axis, const float angle) {
-    Quat q = Transform::quaternion_from_rotation(axis, angle);
-    Mat4 m = Mat4::identity();
-
-    m[0] = 1 - 2 * (q.y * q.y + q.z * q.z);
-    m[1] = 2 * (q.x * q.y - q.z * q.w);
-    m[2] = 2 * (q.x * q.z + q.y * q.w);
-
-    m[4] = 2 * (q.x * q.y + q.z * q.w);
-    m[5] = 1 - 2 * (q.x * q.x + q.z * q.z);
-    m[6] = 2 * (q.y * q.z - q.x * q.w);
-
-    m[8] = 2 * (q.x * q.z - q.y * q.w);
-    m[9] = 2 * (q.y * q.z + q.x * q.w);
-    m[10] = 1 - 2 * (q.x * q.x + q.y * q.y);
-
+    Mat4 m = Mat4::identity().rotated(axis, angle);
     return (*this) *= m.round();
 }
 
