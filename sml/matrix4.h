@@ -30,6 +30,8 @@ class Mat4 {
     Mat4 scaled(const float a) const;
     Mat4 rotated(const Vec3& axis, const float angle) const;
     Mat4& rotate(const Vec3& axis, const float angle);
+    Mat4 transposed() const;
+    Mat4& transpose();
 
     // misc methods
     std::string to_string() const;
@@ -47,12 +49,12 @@ class Mat4 {
     static Mat4 look_at(const Vec3& from, const Vec3& target, const Vec3& up);
     static Mat4 look_at(const Vec3& from, const Vec3& target);
 
-    static const uint32_t SIZE = 16;
-    static const uint32_t MEM_SIZE = SIZE * sizeof(float);
+    static const size_t SIZE = 16;
+    static const size_t MEM_SIZE = SIZE * sizeof(float);
 
     operator std::string();
-    float operator[](const uint32_t n) const;
-    float& operator[](const uint32_t n);
+    float operator[](const size_t n) const;
+    float& operator[](const size_t n);
 
    private:
     float _points[16];
@@ -170,7 +172,7 @@ inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target) {
     return look_at(from, target, Vec3::up());
 }
 
-// Methods
+// Tranformation Methods
 
 inline Mat4 Mat4::translated(const Vec3& v) const {
     Mat4 m = Mat4::identity();
@@ -191,7 +193,7 @@ inline Mat4& Mat4::translate(const Vec3& v) {
 inline Mat4 Mat4::scaled(const float a) const { return (*this) * a; }
 
 inline Mat4& Mat4::scale(const float a) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         _points[i] *= a;
     }
     return *this;
@@ -221,9 +223,30 @@ inline Mat4& Mat4::rotate(const Vec3& axis, const float angle) {
     return (*this) *= m.round();
 }
 
+inline Mat4 Mat4::transposed() const {
+    Mat4 m{};
+
+    m.copy(*this);
+    m.transpose();
+
+    return m;
+}
+
+inline Mat4& Mat4::transpose() {
+    float buffer[16] = {_points[0], _points[4],  _points[8],  _points[12], _points[1],  _points[5],
+                        _points[9], _points[13], _points[2],  _points[6],  _points[10], _points[14],
+                        _points[3], _points[7],  _points[11], _points[15]};
+    for (size_t i = 0; i < 16; i++) {
+        _points[i] = buffer[i];
+    }
+    return (*this);
+}
+
+// Misc Methods
+
 inline Mat4& Mat4::round() {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
-        if (fabs(_points[i]) <= FLT_EPSILON) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
+        if (std::fabs(_points[i]) <= FLT_EPSILON) {
             _points[i] = 0;
         }
     }
@@ -231,7 +254,7 @@ inline Mat4& Mat4::round() {
 }
 
 inline Mat4& Mat4::copy(const Mat4& m) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         _points[i] = m[i];
     }
     return (*this);
@@ -255,15 +278,15 @@ inline std::string Mat4::to_string() const {
 
 inline Mat4::operator std::string() { return to_string(); }
 
-inline float Mat4::operator[](const uint32_t n) const { return _points[n]; }
+inline float Mat4::operator[](const size_t n) const { return _points[n]; }
 
-inline float& Mat4::operator[](const uint32_t n) { return _points[n]; }
+inline float& Mat4::operator[](const size_t n) { return _points[n]; }
 
 // Imutable operators
 
 inline bool operator==(const Mat4& a, const Mat4& b) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
-        if (fabs(a[i] - b[i]) > FLT_EPSILON) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
+        if (std::fabs(a[i] - b[i]) > FLT_EPSILON) {
             return false;
         }
     }
@@ -271,8 +294,8 @@ inline bool operator==(const Mat4& a, const Mat4& b) {
 }
 
 inline bool operator!=(const Mat4& a, const Mat4& b) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
-        if (fabs(a[i] - b[i]) > FLT_EPSILON) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
+        if (std::fabs(a[i] - b[i]) > FLT_EPSILON) {
             return true;
         }
     }
@@ -281,7 +304,7 @@ inline bool operator!=(const Mat4& a, const Mat4& b) {
 
 inline Mat4 operator+(const Mat4& a, const Mat4& b) {
     Mat4 m{};
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         m[i] = a[i] + b[i];
     }
     return m;
@@ -289,7 +312,7 @@ inline Mat4 operator+(const Mat4& a, const Mat4& b) {
 
 inline Mat4 operator-(const Mat4& a, const Mat4& b) {
     Mat4 m{};
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         m[i] = a[i] - b[i];
     }
     return m;
@@ -323,7 +346,7 @@ inline Vec3 operator*(const Mat4& m, const Vec3& v) {
 
 inline Mat4 operator*(const Mat4& m, const float a) {
     Mat4 n{};
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         n[i] = m[i] * a;
     }
     return n;
@@ -331,7 +354,7 @@ inline Mat4 operator*(const Mat4& m, const float a) {
 
 inline Mat4 operator*(const float a, const Mat4& m) {
     Mat4 n{};
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         n[i] = m[i] * a;
     }
     return n;
@@ -339,7 +362,7 @@ inline Mat4 operator*(const float a, const Mat4& m) {
 
 inline Mat4 operator-(const Mat4& m) {
     Mat4 n{};
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         n[i] = -m[i];
     }
     return n;
@@ -348,14 +371,14 @@ inline Mat4 operator-(const Mat4& m) {
 // Mutable operators
 
 inline Mat4& operator+=(Mat4& a, const Mat4& b) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         a[i] += b[i];
     }
     return a;
 }
 
 inline Mat4& operator-=(Mat4& a, const Mat4& b) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         a[i] -= b[i];
     }
     return a;
@@ -383,7 +406,7 @@ inline Mat4& operator*=(Mat4& a, const Mat4& b) {
 }
 
 inline Mat4& operator*=(Mat4& m, const float a) {
-    for (uint32_t i = 0; i < Mat4::SIZE; i++) {
+    for (size_t i = 0; i < Mat4::SIZE; i++) {
         m[i] *= a;
     }
     return m;
