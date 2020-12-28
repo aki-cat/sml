@@ -57,7 +57,7 @@ class Mat4 {
     float& operator[](const size_t n);
 
    private:
-    float _points[16];
+    float _data[16];
 };
 
 // Operators
@@ -91,8 +91,8 @@ Mat4& operator*=(Mat4& m, const float a);
 
 inline Mat4::Mat4() : Mat4({1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}) {}
 
-inline Mat4::Mat4(const Points16& points) : _points{} {
-    std::memcpy(_points, points.f, Mat4::MEM_SIZE);
+inline Mat4::Mat4(const Points16& points) : _data{} {
+    std::memcpy(_data, points.f, Mat4::MEM_SIZE);
 }
 
 // Useful static members
@@ -194,7 +194,7 @@ inline Mat4 Mat4::scaled(const float a) const { return (*this) * a; }
 
 inline Mat4& Mat4::scale(const float a) {
     for (size_t i = 0; i < Mat4::SIZE; i++) {
-        _points[i] *= a;
+        _data[i] *= a;
     }
     return *this;
 }
@@ -233,11 +233,11 @@ inline Mat4 Mat4::transposed() const {
 }
 
 inline Mat4& Mat4::transpose() {
-    float buffer[16] = {_points[0], _points[4],  _points[8],  _points[12], _points[1],  _points[5],
-                        _points[9], _points[13], _points[2],  _points[6],  _points[10], _points[14],
-                        _points[3], _points[7],  _points[11], _points[15]};
+    float buffer[16] = {_data[0], _data[4],  _data[8],  _data[12], _data[1],  _data[5],
+                        _data[9], _data[13], _data[2],  _data[6],  _data[10], _data[14],
+                        _data[3], _data[7],  _data[11], _data[15]};
     for (size_t i = 0; i < 16; i++) {
-        _points[i] = buffer[i];
+        _data[i] = buffer[i];
     }
     return (*this);
 }
@@ -246,8 +246,8 @@ inline Mat4& Mat4::transpose() {
 
 inline Mat4& Mat4::round() {
     for (size_t i = 0; i < Mat4::SIZE; i++) {
-        if (std::fabs(_points[i]) <= FLT_EPSILON) {
-            _points[i] = 0;
+        if (std::fabs(_data[i]) <= FLT_EPSILON) {
+            _data[i] = 0;
         }
     }
     return (*this);
@@ -255,7 +255,7 @@ inline Mat4& Mat4::round() {
 
 inline Mat4& Mat4::copy(const Mat4& m) {
     for (size_t i = 0; i < Mat4::SIZE; i++) {
-        _points[i] = m[i];
+        _data[i] = m[i];
     }
     return (*this);
 }
@@ -263,13 +263,13 @@ inline Mat4& Mat4::copy(const Mat4& m) {
 inline std::string Mat4::to_string() const {
     std::stringstream stream{};
     stream << "Mat4 { ";
-    stream << _points[0] << " " << _points[1] << " " << _points[2] << " " << _points[3];
+    stream << _data[0] << " " << _data[1] << " " << _data[2] << " " << _data[3];
     stream << " }" << std::endl << "     { ";
-    stream << _points[4] << " " << _points[5] << " " << _points[6] << " " << _points[7];
+    stream << _data[4] << " " << _data[5] << " " << _data[6] << " " << _data[7];
     stream << " }" << std::endl << "     { ";
-    stream << _points[8] << " " << _points[9] << " " << _points[10] << " " << _points[11];
+    stream << _data[8] << " " << _data[9] << " " << _data[10] << " " << _data[11];
     stream << " }" << std::endl << "     { ";
-    stream << _points[12] << " " << _points[13] << " " << _points[14] << " " << _points[15];
+    stream << _data[12] << " " << _data[13] << " " << _data[14] << " " << _data[15];
     stream << " }" << std::endl;
     return stream.str();
 }
@@ -278,9 +278,9 @@ inline std::string Mat4::to_string() const {
 
 inline Mat4::operator std::string() { return to_string(); }
 
-inline float Mat4::operator[](const size_t n) const { return _points[n]; }
+inline float Mat4::operator[](const size_t n) const { return _data[n]; }
 
-inline float& Mat4::operator[](const size_t n) { return _points[n]; }
+inline float& Mat4::operator[](const size_t n) { return _data[n]; }
 
 // Imutable operators
 
