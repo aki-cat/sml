@@ -49,15 +49,16 @@ class Mat4 {
     static Mat4 look_at(const Vec3& from, const Vec3& target, const Vec3& up);
     static Mat4 look_at(const Vec3& from, const Vec3& target);
 
-    static const size_t SIZE = 16;
-    static const size_t MEM_SIZE = SIZE * sizeof(float);
+    static const size_t SIZE = 4;
+    static const size_t MEM_SIZE = SIZE * SIZE * sizeof(float);
 
     operator std::string();
-    float operator[](const size_t n) const;
-    float& operator[](const size_t n);
+
+    const float* operator[](const size_t n) const;
+    float* operator[](const size_t n);
 
    private:
-    float _data[16];
+    float _data[4][4];
 };
 
 // Operators
@@ -113,12 +114,11 @@ inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, f
                                         float z_near, float z_far) {
     Mat4 m = Mat4::zero();
 
-    m[0] = 2.f / (max_x - min_x);
-    m[5] = 2.f / (max_y - min_y);
-    m[10] = 1.f / (z_far - z_near);
-
-    m[14] = z_near / (z_near - z_far);
-    m[15] = 1.f;
+    m[0][0] = 2.f / (max_x - min_x);
+    m[1][1] = 2.f / (max_y - min_y);
+    m[2][2] = 1.f / (z_far - z_near);
+    m[2][3] = z_near / (z_near - z_far);
+    m[3][3] = 1.f;
 
     return m;
 }
@@ -129,11 +129,11 @@ inline Mat4 Mat4::conical_projection(float fov, float aspect, float z_near, floa
 
     Mat4 m = Mat4::zero();
 
-    m[0] = rect_width;
-    m[5] = rect_height;
-    m[10] = (-z_near - z_far) / (z_near - z_far);
-    m[11] = 2.f * z_far * z_near / (z_near - z_far);
-    m[14] = 1.f;
+    m[0][0] = rect_width;
+    m[1][1] = rect_height;
+    m[2][2] = (-z_near - z_far) / (z_near - z_far);
+    m[3][2] = 2.f * z_far * z_near / (z_near - z_far);
+    m[2][3] = 1.f;
 
     return m;
 }
@@ -149,21 +149,21 @@ inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target, const Vec3& up) 
 
     Mat4 m = Mat4::identity();
 
-    m[0] = xaxis.x;
-    m[1] = xaxis.y;
-    m[2] = xaxis.z;
+    m[0][0] = xaxis.x;
+    m[1][0] = xaxis.y;
+    m[2][0] = xaxis.z;
 
-    m[4] = yaxis.x;
-    m[5] = yaxis.y;
-    m[6] = yaxis.z;
+    m[0][1] = yaxis.x;
+    m[1][1] = yaxis.y;
+    m[2][1] = yaxis.z;
 
-    m[8] = -zaxis.x;
-    m[9] = -zaxis.y;
-    m[10] = -zaxis.z;
+    m[0][2] = -zaxis.x;
+    m[1][2] = -zaxis.y;
+    m[2][2] = -zaxis.z;
 
-    m[3] = -xaxis.dot(from);
-    m[7] = -yaxis.dot(from);
-    m[11] = -zaxis.dot(from);
+    m[3][0] = -xaxis.dot(from);
+    m[3][1] = -yaxis.dot(from);
+    m[3][2] = -zaxis.dot(from);
 
     return m;
 }
@@ -176,44 +176,46 @@ inline Mat4 Mat4::look_at(const Vec3& from, const Vec3& target) {
 
 inline Mat4 Mat4::translated(const Vec3& v) const {
     Mat4 m = Mat4::identity();
-    m[3] += v.x;
-    m[7] += v.y;
-    m[11] += v.z;
+    m[3][0] += v.x;
+    m[3][1] += v.y;
+    m[3][2] += v.z;
     return (*this) * m;
 }
 
 inline Mat4& Mat4::translate(const Vec3& v) {
     Mat4 m = Mat4::identity();
-    m[3] += v.x;
-    m[7] += v.y;
-    m[11] += v.z;
+    m[3][0] += v.x;
+    m[3][1] += v.y;
+    m[3][2] += v.z;
     return (*this) *= m;
 }
 
 inline Mat4 Mat4::scaled(const float a) const { return (*this) * a; }
 
 inline Mat4& Mat4::scale(const float a) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        _data[i] *= a;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            _data[x][y] *= a;
+        }
     }
-    return *this;
+    return (*this);
 }
 
 inline Mat4 Mat4::rotated(const Vec3& axis, const float angle) const {
     Quat q = Transform::quaternion_from_rotation(axis, angle);
     Mat4 m = Mat4::identity();
 
-    m[0] = 1 - 2 * (q.y * q.y + q.z * q.z);
-    m[1] = 2 * (q.x * q.y + q.z * q.w);
-    m[2] = 2 * (q.x * q.z - q.y * q.w);
+    m[0][0] = 1 - 2 * (q.y * q.y + q.z * q.z);
+    m[0][1] = 2 * (q.x * q.y - q.z * q.w);
+    m[0][2] = 2 * (q.x * q.z + q.y * q.w);
 
-    m[4] = 2 * (q.x * q.y - q.z * q.w);
-    m[5] = 1 - 2 * (q.x * q.x + q.z * q.z);
-    m[6] = 2 * (q.y * q.z + q.x * q.w);
+    m[1][0] = 2 * (q.x * q.y + q.z * q.w);
+    m[1][1] = 1 - 2 * (q.x * q.x + q.z * q.z);
+    m[1][2] = 2 * (q.y * q.z - q.x * q.w);
 
-    m[8] = 2 * (q.x * q.z + q.y * q.w);
-    m[9] = 2 * (q.y * q.z - q.x * q.w);
-    m[10] = 1 - 2 * (q.x * q.x + q.y * q.y);
+    m[2][0] = 2 * (q.x * q.z - q.y * q.w);
+    m[2][1] = 2 * (q.y * q.z + q.x * q.w);
+    m[2][2] = 1 - 2 * (q.x * q.x + q.y * q.y);
 
     return (*this) * m.round();
 }
@@ -233,29 +235,32 @@ inline Mat4 Mat4::transposed() const {
 }
 
 inline Mat4& Mat4::transpose() {
-    float buffer[16] = {_data[0], _data[4],  _data[8],  _data[12], _data[1],  _data[5],
-                        _data[9], _data[13], _data[2],  _data[6],  _data[10], _data[14],
-                        _data[3], _data[7],  _data[11], _data[15]};
-    for (size_t i = 0; i < 16; i++) {
-        _data[i] = buffer[i];
-    }
+    float buffer[16] = {_data[0][0], _data[0][1], _data[0][2], _data[0][3],  // force format
+                        _data[1][0], _data[1][1], _data[1][2], _data[1][3],
+                        _data[2][0], _data[2][1], _data[3][2], _data[2][3],
+                        _data[3][0], _data[3][1], _data[4][2], _data[3][3]};
+    std::memcpy(_data, buffer, Mat4::MEM_SIZE);
     return (*this);
 }
 
 // Misc Methods
 
 inline Mat4& Mat4::round() {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        if (std::fabs(_data[i]) <= FLT_EPSILON) {
-            _data[i] = 0;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            if (std::fabs(_data[x][y]) <= FLT_EPSILON) {
+                _data[x][y] = 0;
+            }
         }
     }
     return (*this);
 }
 
 inline Mat4& Mat4::copy(const Mat4& m) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        _data[i] = m[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            std::memcpy(_data, m._data, Mat4::MEM_SIZE);
+        }
     }
     return (*this);
 }
@@ -263,13 +268,13 @@ inline Mat4& Mat4::copy(const Mat4& m) {
 inline std::string Mat4::to_string() const {
     std::stringstream stream{};
     stream << "Mat4 { ";
-    stream << _data[0] << " " << _data[1] << " " << _data[2] << " " << _data[3];
+    stream << _data[0][0] << " " << _data[1][0] << " " << _data[2][0] << " " << _data[3][0];
     stream << " }" << std::endl << "     { ";
-    stream << _data[4] << " " << _data[5] << " " << _data[6] << " " << _data[7];
+    stream << _data[0][1] << " " << _data[1][1] << " " << _data[2][1] << " " << _data[3][1];
     stream << " }" << std::endl << "     { ";
-    stream << _data[8] << " " << _data[9] << " " << _data[10] << " " << _data[11];
+    stream << _data[0][2] << " " << _data[1][2] << " " << _data[2][2] << " " << _data[3][2];
     stream << " }" << std::endl << "     { ";
-    stream << _data[12] << " " << _data[13] << " " << _data[14] << " " << _data[15];
+    stream << _data[0][3] << " " << _data[1][3] << " " << _data[2][3] << " " << _data[3][3];
     stream << " }" << std::endl;
     return stream.str();
 }
@@ -278,25 +283,29 @@ inline std::string Mat4::to_string() const {
 
 inline Mat4::operator std::string() { return to_string(); }
 
-inline float Mat4::operator[](const size_t n) const { return _data[n]; }
+inline const float* Mat4::operator[](const size_t n) const { return _data[n]; }
 
-inline float& Mat4::operator[](const size_t n) { return _data[n]; }
+inline float* Mat4::operator[](const size_t n) { return _data[n]; }
 
 // Imutable operators
 
 inline bool operator==(const Mat4& a, const Mat4& b) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        if (std::fabs(a[i] - b[i]) > FLT_EPSILON) {
-            return false;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            if (std::fabs(a[x][y] - b[x][y]) > FLT_EPSILON) {
+                return false;
+            }
         }
     }
     return true;
 }
 
 inline bool operator!=(const Mat4& a, const Mat4& b) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        if (std::fabs(a[i] - b[i]) > FLT_EPSILON) {
-            return true;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            if (std::fabs(a[x][y] - b[x][y]) > FLT_EPSILON) {
+                return true;
+            }
         }
     }
     return false;
@@ -304,66 +313,83 @@ inline bool operator!=(const Mat4& a, const Mat4& b) {
 
 inline Mat4 operator+(const Mat4& a, const Mat4& b) {
     Mat4 m{};
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        m[i] = a[i] + b[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            m[x][y] = a[x][y] + b[x][y];
+        }
     }
     return m;
 }
 
 inline Mat4 operator-(const Mat4& a, const Mat4& b) {
     Mat4 m{};
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        m[i] = a[i] - b[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            m[x][y] = a[x][y] - b[x][y];
+        }
     }
     return m;
 }
 
 inline Mat4 operator*(const Mat4& a, const Mat4& b) {
-    return Mat4({a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
-                 a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
-                 a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14],
-                 a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + a[3] * b[15],
-                 a[4] * b[0] + a[5] * b[4] + a[6] * b[8] + a[7] * b[12],
-                 a[4] * b[1] + a[5] * b[5] + a[6] * b[9] + a[7] * b[13],
-                 a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14],
-                 a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15],
-                 a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12],
-                 a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13],
-                 a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14],
-                 a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15],
-                 a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
-                 a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
-                 a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
-                 a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]});
+    Mat4 m;
+
+    m[0][0] = a[0][0] * b[0][0] + a[1][0] * b[0][1] + a[2][0] * b[0][2] + a[3][0] * b[0][3];
+    m[1][0] = a[0][0] * b[1][0] + a[1][0] * b[1][1] + a[2][0] * b[1][2] + a[3][0] * b[1][3];
+    m[2][0] = a[0][0] * b[2][0] + a[1][0] * b[2][1] + a[2][0] * b[2][2] + a[3][0] * b[2][3];
+    m[3][0] = a[0][0] * b[3][0] + a[1][0] * b[3][1] + a[2][0] * b[3][2] + a[3][0] * b[3][3];
+
+    m[0][1] = a[0][1] * b[0][0] + a[1][1] * b[0][1] + a[2][1] * b[0][2] + a[3][1] * b[0][3];
+    m[1][1] = a[0][1] * b[1][0] + a[1][1] * b[1][1] + a[2][1] * b[1][2] + a[3][1] * b[1][3];
+    m[2][1] = a[0][1] * b[2][0] + a[1][1] * b[2][1] + a[2][1] * b[2][2] + a[3][1] * b[2][3];
+    m[3][1] = a[0][1] * b[3][0] + a[1][1] * b[3][1] + a[2][1] * b[3][2] + a[3][1] * b[3][3];
+
+    m[0][2] = a[0][2] * b[0][0] + a[1][2] * b[0][1] + a[2][2] * b[0][2] + a[3][2] * b[0][3];
+    m[1][2] = a[0][2] * b[1][0] + a[1][2] * b[1][1] + a[2][2] * b[1][2] + a[3][2] * b[1][3];
+    m[2][2] = a[0][2] * b[2][0] + a[1][2] * b[2][1] + a[2][2] * b[2][2] + a[3][2] * b[2][3];
+    m[3][2] = a[0][2] * b[3][0] + a[1][2] * b[3][1] + a[2][2] * b[3][2] + a[3][2] * b[3][3];
+
+    m[0][3] = a[0][3] * b[0][0] + a[1][3] * b[0][1] + a[2][3] * b[0][2] + a[3][3] * b[0][3];
+    m[1][3] = a[0][3] * b[1][0] + a[1][3] * b[1][1] + a[2][3] * b[1][2] + a[3][3] * b[1][3];
+    m[2][3] = a[0][3] * b[2][0] + a[1][3] * b[2][1] + a[2][3] * b[2][2] + a[3][3] * b[2][3];
+    m[3][3] = a[0][3] * b[3][0] + a[1][3] * b[3][1] + a[2][3] * b[3][2] + a[3][3] * b[3][3];
+
+    return m;
 }
 
 // We always assume vector is susceptible to translations (w = 1)
 inline Vec3 operator*(const Mat4& m, const Vec3& v) {
-    return Vec3(m[0] * v.x + m[1] * v.y + m[2] * v.z + m[3],
-                m[4] * v.x + m[5] * v.y + m[6] * v.z + m[7],
-                m[8] * v.x + m[9] * v.y + m[10] * v.z + m[11]);
+    return Vec3(m[0][0] * v.x + m[1][0] * v.y + m[2][0] * v.z + m[3][0],
+                m[0][1] * v.x + m[1][1] * v.y + m[2][1] * v.z + m[3][1],
+                m[0][2] * v.x + m[1][2] * v.y + m[2][2] * v.z + m[3][2]);
 }
 
 inline Mat4 operator*(const Mat4& m, const float a) {
     Mat4 n{};
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        n[i] = m[i] * a;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            n[x][y] = m[x][y] * a;
+        }
     }
     return n;
 }
 
 inline Mat4 operator*(const float a, const Mat4& m) {
     Mat4 n{};
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        n[i] = m[i] * a;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            n[x][y] = m[x][y] * a;
+        }
     }
     return n;
 }
 
 inline Mat4 operator-(const Mat4& m) {
     Mat4 n{};
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        n[i] = -m[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            n[x][y] = -m[x][y];
+        }
     }
     return n;
 }
@@ -371,43 +397,34 @@ inline Mat4 operator-(const Mat4& m) {
 // Mutable operators
 
 inline Mat4& operator+=(Mat4& a, const Mat4& b) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        a[i] += b[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            a[x][y] += b[x][y];
+        }
     }
     return a;
 }
 
 inline Mat4& operator-=(Mat4& a, const Mat4& b) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        a[i] -= b[i];
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            a[x][y] -= b[x][y];
+        }
     }
     return a;
 }
 
 inline Mat4& operator*=(Mat4& a, const Mat4& b) {
-    Points16 result({a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12],
-                     a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13],
-                     a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14],
-                     a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + a[3] * b[15],
-                     a[4] * b[0] + a[5] * b[4] + a[6] * b[8] + a[7] * b[12],
-                     a[4] * b[1] + a[5] * b[5] + a[6] * b[9] + a[7] * b[13],
-                     a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14],
-                     a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15],
-                     a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12],
-                     a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13],
-                     a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14],
-                     a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15],
-                     a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
-                     a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
-                     a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
-                     a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]});
-    std::memcpy(&a[0], result.f, Mat4::MEM_SIZE);
+    Mat4 result = a * b;
+    std::memcpy(&a, &result, Mat4::MEM_SIZE);
     return a;
 }
 
 inline Mat4& operator*=(Mat4& m, const float a) {
-    for (size_t i = 0; i < Mat4::SIZE; i++) {
-        m[i] *= a;
+    for (size_t x = 0; x < Mat4::SIZE; x++) {
+        for (size_t y = 0; y < Mat4::SIZE; y++) {
+            m[x][y] *= a;
+        }
     }
     return m;
 }
