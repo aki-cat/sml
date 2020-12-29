@@ -12,5 +12,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: make
-        run: make
+      - name: Run Tests
+        run: |
+          - cmake -B build -DSML_RUN_TESTS=1
+          - cmake --build build
