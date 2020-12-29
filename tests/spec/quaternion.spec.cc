@@ -1,9 +1,8 @@
-#include "smltests.h"
+#include <btl.h>
+#include <sml/quaternion.h>
+#include <type_traits>
 
-#include <sml/vector3.h>
-
-namespace SML {
-namespace Tests {
+using sml::Quat;
 
 DESCRIBE_CLASS(Quat) {
     DESCRIBE_TEST(operator+, AddingTwoQuaternions, ReturnExpectedResult) {
@@ -48,6 +47,3 @@ DESCRIBE_CLASS(Quat) {
         ASSERT_IS_TRUE(std::is_standard_layout<Quat>::value);
     };
 }
-
-}  // namespace Tests
-}  // namespace SML

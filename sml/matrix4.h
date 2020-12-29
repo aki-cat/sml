@@ -27,7 +27,7 @@
 #include <sml/transform.h>
 #include <sml/vector3.h>
 
-namespace SML {
+namespace sml {
 
 struct Points16 {
     float f[16];
@@ -444,6 +444,12 @@ inline Mat4& operator*=(Mat4& m, const float a) {
     return m;
 }
 
-}  // namespace SML
+}  // namespace sml
+
+namespace std {
+
+inline string to_string(const sml::Mat4& m) { return m.to_string(); }
+
+}  // namespace std
 
 #endif

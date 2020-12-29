@@ -5,25 +5,31 @@
 #include "spec/transform.spec.cc"
 #include "spec/vector3.spec.cc"
 
+#include <btl.h>
 #include <iostream>
 
-using namespace SML;
-using namespace SML::Tests;
+static std::string red_text(const std::string& text) {
+    return std::string("\033[91m" + text + "\033[0m");
+}
+
+static std::string green_text(const std::string& text) {
+    return std::string("\033[92m" + text + "\033[0m");
+}
 
 int main() {
-    // Vec3 tests
-
     std::cout << std::endl << "Running tests..." << std::endl << std::endl;
 
-    TestRunner<Color>::run();
-    TestRunner<Vec3>::run();
-    TestRunner<Quat>::run();
-    TestRunner<Mat4>::run();
-    TestRunner<Transform>::run();
+    btl::TestRunner<sml::Color>::run();
+    btl::TestRunner<sml::Vec3>::run();
+    btl::TestRunner<sml::Quat>::run();
+    btl::TestRunner<sml::Mat4>::run();
+    btl::TestRunner<sml::Transform>::run();
 
-    if (ERROR_COUNT > 0) {
+    if (btl::has_errors()) {
+        std::cerr << red_text("One or more tests failed!") << std::endl << std::endl;
         return -1;
     }
 
+    std::cout << green_text("Tests were successful!") << std::endl << std::endl;
     return 0;
 }

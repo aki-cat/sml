@@ -33,7 +33,7 @@
     c.b = std::max(0.f, std::min(1.f, c.b)); \
     c.a = std::max(0.f, std::min(1.f, c.a))
 
-namespace SML {
+namespace sml {
 
 class Color {
    public:
@@ -240,11 +240,11 @@ inline Color& operator-=(Color& c1, const Color& c2) {
     return c1;
 }
 
-}  // namespace SML
+}  // namespace sml
 
 namespace std {
 
-inline string to_string(const SML::Color& c) { return c.to_string(); }
+inline string to_string(const sml::Color& c) { return c.to_string(); }
 
 }  // namespace std
 

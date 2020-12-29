@@ -1,9 +1,7 @@
-#include "smltests.h"
-
+#include <btl.h>
 #include <sml/color.h>
 
-namespace SML {
-namespace Tests {
+using sml::Color;
 
 DESCRIBE_CLASS(Color) {
     DESCRIBE_TEST(to_string, ConvertingColorToString, ReturnExpectedResult) {
@@ -29,6 +27,3 @@ DESCRIBE_CLASS(Color) {
         ASSERT_IS_TRUE(std::is_standard_layout<Color>::value);
     };
 }
-
-}  // namespace Tests
-}  // namespace SML

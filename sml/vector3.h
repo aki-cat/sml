@@ -27,7 +27,7 @@
 #include <sstream>
 #include <string>
 
-namespace SML {
+namespace sml {
 
 class Vec3 {
    public:
@@ -331,11 +331,11 @@ inline Vec3& operator-=(Vec3& a, const Vec3& b) {
     return a;
 }
 
-}  // namespace SML
+}  // namespace sml
 
 namespace std {
 
-inline string to_string(const SML::Vec3& v) { return v.to_string(); }
+inline string to_string(const sml::Vec3& v) { return v.to_string(); }
 
 }  // namespace std
 

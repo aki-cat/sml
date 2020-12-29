@@ -1,11 +1,9 @@
-
-#include "smltests.h"
-
+#include <btl.h>
 #include <sml/matrix4.h>
 #include <type_traits>
 
-namespace SML {
-namespace Tests {
+using sml::Mat4;
+using sml::Vec3;
 
 DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(operator[], SimpleMatrix, ReturnExpectedContents) {
@@ -90,7 +88,4 @@ DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(std::is_standard_layout, CheckedByCompiler, BeStandardLayout) {
         ASSERT_IS_TRUE(std::is_standard_layout<Mat4>::value);
     };
-}  // namespace Tests
-
-}  // namespace Tests
-}  // namespace SML
+}

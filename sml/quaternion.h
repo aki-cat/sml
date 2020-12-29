@@ -46,7 +46,7 @@ e ^ (-theta/2 * normal_quat) =
 
 */
 
-namespace SML {
+namespace sml {
 
 class Quat {
    public:
@@ -279,6 +279,12 @@ inline Quat& operator-=(Quat& a, const Quat& b) {
     return a;
 }
 
-}  // namespace SML
+}  // namespace sml
+
+namespace std {
+
+inline string to_string(const sml::Quat& q) { return q.to_string(); }
+
+}  // namespace std
 
 #endif

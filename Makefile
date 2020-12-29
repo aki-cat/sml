@@ -1,9 +1,12 @@
 BIN_DIR=bin
+
 SOURCE_DIR=tests
 INCLUDE_DIR=.
+TEST_LIB_DIR=./third_party/btl
+INCLUDE_FLAGS=-I$(INCLUDE_DIR) -I$(SOURCE_DIR) -I${TEST_LIB_DIR}
 
 CXXFLAGS=-std=c++14
-CCFLAGS=-O0 -Wall -Werror -Wpedantic -I$(INCLUDE_DIR) -I$(SOURCE_DIR)
+CCFLAGS=-g -O0 -Wall -Werror -Wpedantic ${INCLUDE_FLAGS}
 CXX=g++-9
 CC=gcc-9
 

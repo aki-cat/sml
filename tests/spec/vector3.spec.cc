@@ -1,9 +1,8 @@
-#include "smltests.h"
-
+#include <btl.h>
 #include <sml/vector3.h>
+#include <type_traits>
 
-namespace SML {
-namespace Tests {
+using sml::Vec3;
 
 DESCRIBE_CLASS(Vec3) {
     DESCRIBE_TEST(operator+, AddingTwoVectors, ReturnExpectedResult) {
@@ -55,6 +54,3 @@ DESCRIBE_CLASS(Vec3) {
         ASSERT_IS_TRUE(std::is_standard_layout<Vec3>::value);
     };
 }
-
-}  // namespace Tests
-}  // namespace SML

@@ -1,12 +1,12 @@
-
-#include "smltests.h"
-
+#include <btl.h>
 #include <sml/quaternion.h>
 #include <sml/transform.h>
 #include <sml/vector3.h>
+#include <type_traits>
 
-namespace SML {
-namespace Tests {
+using sml::Quat;
+using sml::Transform;
+using sml::Vec3;
 
 DESCRIBE_CLASS(Transform) {
     DESCRIBE_TEST(rotated, RotatedBy45Degrees, ReturnExpectedAngularResult) {
@@ -34,6 +34,3 @@ DESCRIBE_CLASS(Transform) {
         ASSERT_ARE_EQUAL(result.length(), expected);
     };
 }
-
-}  // namespace Tests
-}  // namespace SML

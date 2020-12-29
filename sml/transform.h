@@ -25,7 +25,7 @@
 #include <sml/quaternion.h>
 #include <sml/vector3.h>
 
-namespace SML {
+namespace sml {
 
 class Transform {
    public:
@@ -87,6 +87,6 @@ inline Quat Transform::quaternion_from_rotation(const Vec3& axis, const float an
 
 inline Vec3 Transform::vector_from_quaternion(const Quat& q) { return Vec3(q.x, q.y, q.z); }
 
-}  // namespace SML
+}  // namespace sml
 
 #endif
