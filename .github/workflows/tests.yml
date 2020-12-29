@@ -14,5 +14,5 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run Tests
         run: |
-          - cmake -B build -DSML_RUN_TESTS=1
-          - cmake --build build
+          cmake -B build -DSML_RUN_TESTS=1
+          cmake --build build
