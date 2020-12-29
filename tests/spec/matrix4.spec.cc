@@ -87,16 +87,8 @@ DESCRIBE_CLASS(Mat4) {
         ASSERT_ARRAYS_ARE_EQUAL(results, expected, 0, 8);
     };
 
-    DESCRIBE_TEST(std::is_trivial, CheckedByCompiler, NotBeTrivial) {
-        ASSERT_IS_FALSE(std::is_trivial<Mat4>::value);
-    };
-
     DESCRIBE_TEST(std::is_standard_layout, CheckedByCompiler, BeStandardLayout) {
         ASSERT_IS_TRUE(std::is_standard_layout<Mat4>::value);
-    };
-
-    DESCRIBE_TEST(std::is_pod, CheckedByCompiler, NotBePOD) {
-        ASSERT_IS_FALSE(std::is_pod<Mat4>::value);
     };
 }  // namespace Tests
 

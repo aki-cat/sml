@@ -50,8 +50,8 @@ namespace SML {
 
 class Quat {
    public:
-    Quat(float _w, float _x, float _y, float _z);
     Quat();
+    Quat(float _w, float _x, float _y, float _z);
 
     // data
     float w, x, y, z;
@@ -117,9 +117,9 @@ Quat& operator-=(Quat& a, const Quat& b);
 
 */
 
-inline Quat::Quat(float _w, float _x, float _y, float _z) : w{_w}, x{_x}, y{_y}, z{_z} {}
-
 inline Quat::Quat() : Quat(1.0f, 0.0f, 0.0f, 0.0f) {}
+
+inline Quat::Quat(float _w, float _x, float _y, float _z) : w{_w}, x{_x}, y{_y}, z{_z} {}
 
 // Static members
 

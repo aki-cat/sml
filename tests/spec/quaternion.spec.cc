@@ -44,16 +44,8 @@ DESCRIBE_CLASS(Quat) {
         ASSERT_ARRAYS_ARE_EQUAL(cast_v, expected, 0, 4);
     };
 
-    DESCRIBE_TEST(std::is_trivial, CheckedByCompiler, BeTrivial) {
-        ASSERT_IS_FALSE(std::is_trivial<Quat>::value);
-    };
-
     DESCRIBE_TEST(std::is_standard_layout, CheckedByCompiler, BeStandardLayout) {
         ASSERT_IS_TRUE(std::is_standard_layout<Quat>::value);
-    };
-
-    DESCRIBE_TEST(std::is_pod, CheckedByCompiler, BePOD) {
-        ASSERT_IS_FALSE(std::is_pod<Quat>::value);
     };
 }
 

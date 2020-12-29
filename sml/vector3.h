@@ -31,8 +31,8 @@ namespace SML {
 
 class Vec3 {
    public:
-    Vec3(float _x, float _y, float _z);
     Vec3();
+    Vec3(float _x, float _y, float _z);
 
     // data
     float x, y, z;
@@ -116,9 +116,9 @@ Vec3& operator-=(Vec3& a, const Vec3& b);
 
 */
 
-inline Vec3::Vec3(float _x, float _y, float _z) : x{_x}, y{_y}, z{_z} {}
-
 inline Vec3::Vec3() : Vec3(0.0f, 0.0f, 0.0f) {}
+
+inline Vec3::Vec3(float _x, float _y, float _z) : x{_x}, y{_y}, z{_z} {}
 
 // Static members
 
