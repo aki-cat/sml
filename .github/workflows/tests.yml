@@ -12,6 +12,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
       - name: Run Tests
         run: |
           cmake -B build -DSML_RUN_TESTS=1
