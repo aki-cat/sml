@@ -11,10 +11,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Update submodules
-        run: git submodule update --init --recursive
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
       - name: Run Tests
         run: |
