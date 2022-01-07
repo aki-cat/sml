@@ -12,7 +12,12 @@ target_include_directories(sml INTERFACE .)
 # TESTS
 
 if(SML_RUN_TESTS)
-    add_compile_options(-pedantic -Wall -Werror -O0 -g)
+    if (MSVC)
+        add_compile_options(/W3 /WX /Od)
+    else(MSVC)
+        add_compile_options(-Wall -pedantic -Werror -O0)
+    endif(MSVC)
+
     add_executable(sml_tests "${PROJECT_SOURCE_DIR}/tests/tests.cc")
 
     add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/btl")
@@ -25,9 +30,17 @@ if(SML_RUN_TESTS)
         LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
     )
 
-    add_custom_command(
-        TARGET sml_tests
-        DEPENDS sml_tests
-        COMMAND "${CMAKE_BINARY_DIR}/sml_tests"
-    )
+    if(MSVC)
+        add_custom_command(
+            TARGET sml_tests
+            DEPENDS sml_tests
+            COMMAND ${CMAKE_BINARY_DIR}/Debug/sml_tests.exe
+        )
+    else(MSVC)
+        add_custom_command(
+            TARGET sml_tests
+            DEPENDS sml_tests
+            COMMAND "${CMAKE_BINARY_DIR}/sml_tests"
+        )
+    endif(MSVC)
 endif(SML_RUN_TESTS)

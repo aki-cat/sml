@@ -22,11 +22,11 @@
 #ifndef SLIPPYS_MATH_LIBRARY_COLOUR_H_
 #define SLIPPYS_MATH_LIBRARY_COLOUR_H_
 
+#include <algorithm>
 #include <cfloat>
 #include <cmath>
 #include <sstream>
 #include <string>
-#include <algorithm>
 
 #define SML_CLAMP_COLOR(c)                   \
     c.r = std::max(0.f, std::min(1.f, c.r)); \
@@ -140,18 +140,11 @@ inline Color Color::gray() { return Color(.5f, .5f, .5f, 1.f); }
 
 inline const std::string Color::to_string() const {
     std::stringstream stream;
-    char buffer[32];
-
-    stream << "Color #0x";
-    std::sprintf(buffer, "%2X", static_cast<uint8_t>(std::round(r * 0xff)));
-    stream << buffer;
-    std::sprintf(buffer, "%2X", static_cast<uint8_t>(std::round(g * 0xff)));
-    stream << buffer;
-    std::sprintf(buffer, "%2X", static_cast<uint8_t>(std::round(b * 0xff)));
-    stream << buffer;
-    std::sprintf(buffer, "%2X", static_cast<uint8_t>(std::round(a * 0xff)));
-    stream << buffer;
-
+    stream << "Color #0x" << std::hex << std::uppercase;
+    stream << static_cast<uint16_t>(std::round(r * 0xff))
+           << static_cast<uint16_t>(std::round(g * 0xff))
+           << static_cast<uint16_t>(std::round(b * 0xff))
+           << static_cast<uint16_t>(std::round(a * 0xff));
     return stream.str();
 }
 

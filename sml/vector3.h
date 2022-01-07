@@ -176,16 +176,10 @@ inline Vec3 Vec3::z_axis() {
 
 inline const std::string Vec3::to_string() const {
     std::stringstream stream;
-    char buffer[32];
-
+    stream.precision(4);
     stream << "Vec3(";
-    std::sprintf(buffer, "%+.3f", x);
-    stream << buffer << ", ";
-    std::sprintf(buffer, "%+.3f", y);
-    stream << buffer << ", ";
-    std::sprintf(buffer, "%+.3f", z);
-    stream << buffer << ")";
-
+    stream << std::showpos << std::showpoint;
+    stream << x << ", " << y << ", " << z << ")";
     return stream.str();
 }
 

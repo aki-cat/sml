@@ -25,6 +25,11 @@
 using sml::Mat4;
 using sml::Vec3;
 
+constexpr float M_PI =
+    3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844f;
+constexpr float M_PI_2 = M_PI * 0.5f;
+constexpr float M_PI_4 = M_PI * 0.25f;
+
 DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(operator[], SimpleMatrix, ReturnExpectedContents) {
         Mat4 mat({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
@@ -68,7 +73,8 @@ DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(rotated, MultipliedToVec3, ReturnExpectedResult) {
         Mat4 rotation = Mat4::identity().rotated(Vec3::y_axis(), M_PI / 6);
         Vec3 result = rotation * Vec3(-2, 1, -1);
-        Vec3 expected = Vec3(.5f - std::sqrt(3), 1, -1 - std::sqrt(3) / 2.f);
+        const float sqrt_3 = static_cast<float>(std::sqrt(3));
+        Vec3 expected = Vec3(.5f - sqrt_3, 1, -1 - sqrt_3 / 2.f);
         ASSERT_ARE_EQUAL(result, expected);
     };
 
@@ -79,7 +85,7 @@ DESCRIBE_CLASS(Mat4) {
 
         vertex = projection * model * vertex;
 
-        ASSERT_ARE_EQUAL(vertex, Vec3(.2, .4, 0));
+        ASSERT_ARE_EQUAL(vertex, Vec3(.2f, .4f, 0));
     };
 
     DESCRIBE_TEST(orthogonal_projection, RotatedVertex, ReturnExpectedResult) {
@@ -96,7 +102,7 @@ DESCRIBE_CLASS(Mat4) {
         };
 
         for (size_t i = 0; i < 8; i++) {
-            double angle = -(static_cast<double>(i) * M_PI_4);
+            float angle = -(static_cast<float>(i) * static_cast<float>(M_PI_4));
             Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), angle);
             Mat4 projection = Mat4::orthogonal_projection(-10, -5, 10, 5, -100, 100);
             results[i] = projection * model * vertex;
