@@ -26,6 +26,7 @@
 #include <cmath>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 #define SML_CLAMP_COLOR(c)                   \
     c.r = std::max(0.f, std::min(1.f, c.r)); \

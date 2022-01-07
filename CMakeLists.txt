@@ -12,8 +12,7 @@ target_include_directories(sml INTERFACE .)
 # TESTS
 
 if(SML_RUN_TESTS)
-    set(CMAKE_CXX_FLAGS "-pedantic -Wall -Werror -O0 -g")
-
+    add_compile_options(-pedantic -Wall -Werror -O0 -g)
     add_executable(sml_tests "${PROJECT_SOURCE_DIR}/tests/tests.cc")
 
     add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/btl")
