@@ -19,16 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 #include <btl.h>
+#include <sml/constants.h>
 #include <sml/matrix4.h>
 #include <type_traits>
 
 using sml::Mat4;
 using sml::Vec3;
 
-constexpr float M_PI =
-    3.141592653589793238462643383279502884197169399375105820974944592307816406286208998628034825342117067982148086513282306647093844f;
-constexpr float M_PI_2 = M_PI * 0.5f;
-constexpr float M_PI_4 = M_PI * 0.25f;
+constexpr float M_PI_2 = sml::PI * 0.5f;
+constexpr float M_PI_4 = sml::PI * 0.25f;
 
 DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(operator[], SimpleMatrix, ReturnExpectedContents) {
@@ -71,7 +70,7 @@ DESCRIBE_CLASS(Mat4) {
     };
 
     DESCRIBE_TEST(rotated, MultipliedToVec3, ReturnExpectedResult) {
-        Mat4 rotation = Mat4::identity().rotated(Vec3::y_axis(), M_PI / 6);
+        Mat4 rotation = Mat4::identity().rotated(Vec3::y_axis(), sml::PI / 6);
         Vec3 result = rotation * Vec3(-2, 1, -1);
         const float sqrt_3 = static_cast<float>(std::sqrt(3));
         Vec3 expected = Vec3(.5f - sqrt_3, 1, -1 - sqrt_3 / 2.f);
