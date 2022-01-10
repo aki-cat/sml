@@ -26,9 +26,6 @@
 using sml::Mat4;
 using sml::Vec3;
 
-constexpr float M_PI_2 = sml::PI * 0.5f;
-constexpr float M_PI_4 = sml::PI * 0.25f;
-
 DESCRIBE_CLASS(Mat4) {
     DESCRIBE_TEST(operator[], SimpleMatrix, ReturnExpectedContents) {
         Mat4 mat({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16});
@@ -79,7 +76,7 @@ DESCRIBE_CLASS(Mat4) {
 
     DESCRIBE_TEST(orthogonal_projection, TranslatedVertex, ReturnExpectedResult) {
         Vec3 vertex = Vec3(-2, 2, 0);
-        Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), M_PI_2);
+        Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), sml::PI * 0.5f);
         Mat4 projection = Mat4::orthogonal_projection(-10, -5, 10, 5, -100, 100);
 
         vertex = projection * model * vertex;
@@ -101,7 +98,7 @@ DESCRIBE_CLASS(Mat4) {
         };
 
         for (size_t i = 0; i < 8; i++) {
-            float angle = -(static_cast<float>(i) * static_cast<float>(M_PI_4));
+            float angle = -(static_cast<float>(i) * static_cast<float>(sml::PI * 0.25f));
             Mat4 model = Mat4::identity().rotated(Vec3::z_axis(), angle);
             Mat4 projection = Mat4::orthogonal_projection(-10, -5, 10, 5, -100, 100);
             results[i] = projection * model * vertex;
