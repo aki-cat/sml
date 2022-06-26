@@ -15,14 +15,14 @@ if(SML_RUN_TESTS)
     if (MSVC)
         add_compile_options(/W3 /WX /Od)
     else(MSVC)
-        add_compile_options(-Wall -pedantic -Werror -O0)
+        add_compile_options(-Wall -pedantic -Werror -O0 -Wextra)
     endif(MSVC)
 
     add_executable(sml_tests "${PROJECT_SOURCE_DIR}/tests/tests.cc")
 
     add_subdirectory("${PROJECT_SOURCE_DIR}/third_party/btl")
     target_link_libraries(sml_tests btl)
-    
+
     target_include_directories(sml_tests PRIVATE "${PROJECT_BINARY_DIR}" "${PROJECT_SOURCE_DIR}")
     set_target_properties(sml_tests
         PROPERTIES

@@ -131,8 +131,10 @@ inline Mat4 Mat4::orthogonal_projection(float min_x, float min_y, float max_x, f
 
     m[0][0] = 2.f / (max_x - min_x);
     m[1][1] = 2.f / (max_y - min_y);
-    m[2][2] = 1.f / (z_far - z_near);
-    m[3][2] = z_near / (z_near - z_far);
+    m[2][2] = -2.f / (z_far - z_near);
+    m[3][0] = -((max_x + min_x) / (max_x - min_x));
+    m[3][1] = -((max_y + min_y) / (max_y - min_y));
+    m[3][2] = -((z_far + z_near) / (z_far - z_near));
     m[3][3] = 1.f;
 
     return m;
@@ -272,25 +274,25 @@ inline Mat4& Mat4::round() {
 }
 
 inline Mat4& Mat4::copy(const Mat4& m) {
-    for (size_t x = 0; x < Mat4::SIZE; x++) {
-        for (size_t y = 0; y < Mat4::SIZE; y++) {
-            std::memcpy(_data, m._data, Mat4::MEM_SIZE);
-        }
-    }
+    std::memcpy(_data, m._data, Mat4::MEM_SIZE);
     return (*this);
 }
 
 inline std::string Mat4::to_string() const {
-    std::stringstream stream{};
-    stream << "Mat4 { ";
-    stream << _data[0][0] << " " << _data[1][0] << " " << _data[2][0] << " " << _data[3][0];
-    stream << " }" << std::endl << "     { ";
-    stream << _data[0][1] << " " << _data[1][1] << " " << _data[2][1] << " " << _data[3][1];
-    stream << " }" << std::endl << "     { ";
-    stream << _data[0][2] << " " << _data[1][2] << " " << _data[2][2] << " " << _data[3][2];
-    stream << " }" << std::endl << "     { ";
-    stream << _data[0][3] << " " << _data[1][3] << " " << _data[2][3] << " " << _data[3][3];
-    stream << " }" << std::endl;
+    std::stringstream stream;
+    stream << "Mat4 {\n";
+
+    for (size_t y = 0; y < Mat4::SIZE; y++) {
+        stream << "      { ";
+        for (size_t x = 0; x < Mat4::SIZE; x++) {
+            char buffer[64];
+            std::snprintf(buffer, 64, "%+.2f", _data[x][y]);
+            stream << buffer << " ";
+        }
+        stream << "}\n";
+    }
+    stream << "}\n";
+
     return stream.str();
 }
 
