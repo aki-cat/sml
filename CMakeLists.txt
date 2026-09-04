@@ -33,14 +33,14 @@ if(SML_RUN_TESTS)
     if(MSVC)
         add_custom_command(
             TARGET sml_tests
-            DEPENDS sml_tests
             COMMAND ${CMAKE_BINARY_DIR}/Debug/sml_tests.exe
+            POST_BUILD
         )
     else(MSVC)
         add_custom_command(
             TARGET sml_tests
-            DEPENDS sml_tests
             COMMAND "${CMAKE_BINARY_DIR}/sml_tests"
+            POST_BUILD
         )
     endif(MSVC)
 endif(SML_RUN_TESTS)
