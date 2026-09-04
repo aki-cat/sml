@@ -23,9 +23,9 @@
 #define SLIPPYS_MATH_LIBRARY_COLOUR_H_
 
 #include <algorithm>
-#include <cfloat>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <sstream>
 #include <string>
 
@@ -59,6 +59,7 @@ class Color {
     static Color blue();
     static Color invisible();
     static Color gray();
+    static Color random();
 };
 
 // Imutable operators
@@ -136,6 +137,11 @@ inline Color Color::blue() { return Color(0.f, 0.f, 1.f, 1.f); }
 inline Color Color::invisible() { return Color(0.f, 0.f, 0.f, 0.f); }
 
 inline Color Color::gray() { return Color(.5f, .5f, .5f, 1.f); }
+
+inline Color Color::random() {
+    return Color(std::rand() % 0xff * 1.f / 0xff, std::rand() % 0xff * 1.f / 0xff,
+                 std::rand() % 0xff * 1.f / 0xff, 1.f);
+}
 
 // Methods
 
