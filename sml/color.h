@@ -25,6 +25,7 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
+#include <cstdint>
 #include <sstream>
 #include <string>
 
