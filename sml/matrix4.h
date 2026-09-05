@@ -207,11 +207,19 @@ inline Mat4& Mat4::translate(const Vec3& v) {
     return (*this) *= m;
 }
 
-inline Mat4 Mat4::scaled(const float a) const { return (*this) * a; }
+inline Mat4 Mat4::scaled(const float a) const {
+    Mat4 m = (*this);
+    for (size_t x = 0; x < 3; x++) {
+        for (size_t y = 0; y < 3; y++) {
+            m[x][y] *= a;
+        }
+    }
+    return m;
+}
 
 inline Mat4& Mat4::scale(const float a) {
-    for (size_t x = 0; x < Mat4::SIZE; x++) {
-        for (size_t y = 0; y < Mat4::SIZE; y++) {
+    for (size_t x = 0; x < 3; x++) {
+        for (size_t y = 0; y < 3; y++) {
             _data[x][y] *= a;
         }
     }
